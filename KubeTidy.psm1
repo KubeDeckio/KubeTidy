@@ -21,7 +21,7 @@
 .NOTES
     Script Name: KubeTidy
     Author: Richard Hooper
-    Version: 0.5
+    Version: 0.6
 
 .EXAMPLE
     Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster""

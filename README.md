@@ -1,4 +1,4 @@
-# ![KubeTidy](./path-to-your-logo.png) KubeTidy
+# ![KubeTidy](./KubeTidy.png) KubeTidy
 
 **KubeTidy** is a PowerShell tool designed to clean up your Kubernetes configuration file by removing unreachable clusters, along with associated users and contexts. It simplifies the management of your `kubeconfig` by ensuring that only reachable and valid clusters remain, making it easier to work with multiple Kubernetes environments.
 
@@ -62,7 +62,7 @@ After execution, you will receive a summary like the following:
 
 ## Logo
 
-![KubeTidy Logo](./path-to-your-logo.png)
+![KubeTidy Logo](./KubeTidy.png)
 
 The **KubeTidy** logo, featuring a minimalist broom sweeping Kubernetes hexagons, symbolizes the efficient cleanup of unreachable clusters in your Kubernetes configuration.
 

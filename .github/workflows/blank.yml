@@ -1,0 +1,40 @@
+name: Publish PowerShell Module to PowerShell Gallery
+
+on:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: windows-latest
+
+    steps:
+      # Checkout the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up PowerShell environment
+      - name: Setup PowerShell
+        uses: actions/setup-powershell@v2
+        with:
+          pwsh-version: '7.x'
+
+      # Validate the module (ensure it loads correctly)
+      - name: Validate PowerShell Module
+        run: |
+          $manifest = Test-ModuleManifest -Path ./KubeTidy.psd1
+          Write-Host "Validated Module Version: $($manifest.Version)"
+
+      # Publish to PowerShell Gallery
+      - name: Publish to PowerShell Gallery
+        run: |
+          Install-Module -Name PowerShellGet -Force -AllowClobber
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Publish-Module -Path ./KubeTidy -NuGetApiKey $env:PSGALLERY_API_KEY -Repository PSGallery
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}

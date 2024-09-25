@@ -12,7 +12,7 @@
 RootModule = 'KubeTidy.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.1'
+ModuleVersion = '0.0.2'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -95,19 +95,19 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @()
+        # Tags = @(Kubernetes Kubeconfig Cleanup)
 
         # A URL to the license for this module.
-        # LicenseUri = ''
+        LicenseUri = 'https://github.com/PixelRobots/KubeTidy/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        # ProjectUri = ''
+        ProjectUri = 'https://github.com/PixelRobots/KubeTidy/'
 
         # A URL to an icon representing this module.
-        # IconUri = ''
+        IconUri = 'https://github.com/PixelRobots/KubeTidy/blob/main/images/KubeTidy.png'
 
         # ReleaseNotes of this module
-        # ReleaseNotes = ''
+        ReleaseNotes = 'https://github.com/PixelRobots/KubeTidy/blob/main/README.md'
 
         # Prerelease string of this module
         # Prerelease = ''
@@ -116,7 +116,7 @@ PrivateData = @{
         # RequireLicenseAcceptance = $false
 
         # External dependent modules of this module
-        # ExternalModuleDependencies = @()
+        # ExternalModuleDependencies = @(powershell-yaml)
 
     } # End of PSData hashtable
 

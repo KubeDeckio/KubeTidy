@@ -1,9 +1,9 @@
 <p align="center">
   <img src="./images/KubeTidy.png" />
 </p>
-<p align="center" style="font-size: 100px;">
+<h1 align="center" style="font-size: 100px;">
   <b>KubeTidy</b>
-</p>
+</h1>
 
 </br>
 

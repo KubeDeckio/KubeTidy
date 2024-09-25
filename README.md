@@ -17,6 +17,7 @@
 - **Backup Creation:** Automatically creates a backup of the original kubeconfig before performing any cleanup.
 - **Summary Report:** Provides a neat summary of how many clusters were checked, removed, and retained.
 - **Force Cleanup Option:** If all clusters are unreachable, KubeTidy can force a cleanup using the `-Force` parameter.
+- **Verbose Output**: Provides detailed logging about cluster reachability and other operations using the `-Verbose` flag.
 
 ## Requirements
 
@@ -52,6 +53,7 @@ Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "clus
 - **`-ExclusionList`**: A comma-separated list of clusters to exclude from removal. (Useful for clusters requiring VPN or temporary networks.)
 - **`-Backup`**: Set to `false` if you don't want a backup to be created. Defaults to `true`.
 - **`-Force`**: Forces cleanup even if no clusters are reachable. Use this when you want to proceed with cleanup despite network issues.
+- **`-Verbose`**: Enables detailed logging during the cleanup process, including information about cluster reachability, backup creation, and module imports.
 
 ### Example
 
@@ -65,6 +67,25 @@ If no clusters are reachable and you still want to proceed:
 
 ```powershell
 Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Force
+```
+
+For detailed logging during the execution:
+
+```powershell
+Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Verbose
+```
+
+### Verbose Output Example
+
+When using the `-Verbose` flag, you will receive detailed information like:
+
+```
+VERBOSE: No KubeConfig path provided. Using default: C:\Users\username\.kube\config
+VERBOSE: powershell-yaml module loaded successfully.
+VERBOSE: Creating a backup of the KubeConfig file.
+VERBOSE: Checking reachability for cluster: aks-prod-cluster at https://example-cluster-url
+VERBOSE: Cluster aks-prod-cluster is reachable via HTTPS.
+VERBOSE: Removed the following clusters: aks-old-cluster
 ```
 
 ## Output

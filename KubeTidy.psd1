@@ -12,7 +12,7 @@
 RootModule = 'KubeTidy.psm1'
 
 # Version number of this module.
-ModuleVersion = '0.0.2'
+ModuleVersion = '0.0.4'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -95,7 +95,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        # Tags = @(Kubernetes Kubeconfig Cleanup)
+        Tags = @('Kubernetes', 'PowerShell', 'Windows', 'DevOps', 'KubeTidy', 'kubeconfig')
 
         # A URL to the license for this module.
         LicenseUri = 'https://github.com/PixelRobots/KubeTidy/blob/main/LICENSE'
@@ -116,7 +116,7 @@ PrivateData = @{
         # RequireLicenseAcceptance = $false
 
         # External dependent modules of this module
-        # ExternalModuleDependencies = @(powershell-yaml)
+        RequiredModules = @(@{ModuleName="powershell-yaml"; ModuleVersion="0.4.2"})
 
     } # End of PSData hashtable
 

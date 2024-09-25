@@ -21,10 +21,10 @@
 .NOTES
     Script Name: KubeTidy
     Author: Richard Hooper
-    Version: 0.1
+    Version: 0.4
 
 .EXAMPLE
-    .\KubeTidy.ps1 -KubeConfigPath "$HOME\.kube\config" -ExclusionList "cluster1,cluster2,cluster3"
+    Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster""
 #>
 
 [CmdletBinding()]

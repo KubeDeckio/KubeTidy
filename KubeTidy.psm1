@@ -21,7 +21,7 @@
 .NOTES
     Script Name: KubeTidy
     Author: Richard Hooper
-    Version: 0.4
+    Version: 0.5
 
 .EXAMPLE
     Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster""
@@ -56,10 +56,12 @@ function Test-ClusterReachability {
     try {
         $response = Invoke-WebRequest -Uri $ClusterServer -UseBasicParsing -TimeoutSec 5 -SkipCertificateCheck -ErrorAction Stop
         return $true
-    } catch {
+    }
+    catch {
         if ($_.Exception.Response) {
             return $true  # Server is reachable but returned an error like 401
-        } else {
+        }
+        else {
             Write-Host "Cluster $ClusterServer is unreachable."
             return $false
         }
@@ -80,6 +82,16 @@ function Invoke-KubeTidyCleanup {
         Write-Host "No KubeConfig path provided. Using default: $homePath\.kube\config" -ForegroundColor Yellow
         $KubeConfigPath = "$homePath\.kube\config"
     }
+
+    # Check if the powershell-yaml module is installed; if not, install it
+    if (-not (Get-Module -ListAvailable -Name powershell-yaml)) {
+        Write-Host "powershell-yaml module not found. Installing powershell-yaml..."
+        Install-Module -Name powershell-yaml -Force -Scope CurrentUser
+    }
+
+    # Import the powershell-yaml module to ensure it's loaded
+    Import-Module powershell-yaml -ErrorAction Stop
+    Write-Host "powershell-yaml module loaded successfully."
     
 
     # Display ASCII art and start message
@@ -121,7 +133,8 @@ function Invoke-KubeTidyCleanup {
         if (-not (Test-ClusterReachability -ClusterServer $clusterServer)) {
             Write-Host "$clusterName is NOT reachable via HTTPS. Marking for removal..." -ForegroundColor Red
             $removedClusters += $clusterName
-        } else {
+        }
+        else {
             Write-Host "$clusterName is reachable via HTTPS." -ForegroundColor Green
             $reachableClusters++
         }
@@ -144,7 +157,8 @@ function Invoke-KubeTidyCleanup {
         $kubeConfig.users = $retainedUsers
 
         Write-Host "Removed clusters, users, and contexts related to unreachable clusters." -ForegroundColor Green
-    } else {
+    }
+    else {
         Write-Host "No clusters were removed." -ForegroundColor Yellow
     }
 

@@ -35,7 +35,7 @@ param (
 )
 
 # Split the ExclusionList by commas to create an array of clusters
-$ExclusionArray = $ExclusionList -split ',' | ForEach-Object { $_.Trim() }
+$ExclusionList = $ExclusionList -split ',' | ForEach-Object { $_.Trim() }
 
 # Function to show KubeTidy Banner
 function Show-KubeTidyBanner {
@@ -110,7 +110,7 @@ function Invoke-KubeTidy {
     [CmdletBinding()]
     param (
         [string]$KubeConfigPath,
-        [array]$ExclusionArray,
+        [array]$ExclusionList,
         [switch]$Force,
         [switch]$ListClusters
     )
@@ -167,7 +167,7 @@ function Invoke-KubeTidy {
 
         Write-Progress -Activity "Checking Cluster:" -Status " $clusterName" -PercentComplete (($checkedClusters / $totalClusters) * 100)
 
-        if ($ExclusionArray -contains $clusterName) {
+        if ($ExclusionList -contains $clusterName) {
             Write-Verbose "Skipping cluster $clusterName as it is in the exclusion list."
             continue
         }

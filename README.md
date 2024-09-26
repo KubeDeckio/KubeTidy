@@ -7,7 +7,7 @@
 
 </br>
 
-**KubeTidy** is a PowerShell tool designed to clean up your Kubernetes configuration file by removing unreachable clusters, along with associated users and contexts. It simplifies the management of your `kubeconfig` by ensuring that only reachable and valid clusters remain, making it easier to work with multiple Kubernetes environments.
+**KubeTidy** is a PowerShell tool designed to clean up your Kubernetes configuration file by removing unreachable clusters, along with associated users and contexts. It simplifies the management of your `kubeconfig` by ensuring that only reachable and valid clusters remain, making it easier to work with multiple Kubernetes environments. **KubeTidy** also supports merging multiple `kubeconfig` files into one.
 
 ## Features
 
@@ -17,7 +17,8 @@
 - **Backup Creation:** Automatically creates a backup of the original kubeconfig before performing any cleanup.
 - **Summary Report:** Provides a neat summary of how many clusters were checked, removed, and retained.
 - **Force Cleanup Option:** If all clusters are unreachable, KubeTidy can force a cleanup using the `-Force` parameter.
-- **List Clusters Option**: Use the `-ListClusters` parameter to simply list all clusters in your kubeconfig without performing any cleanup.
+- **List Clusters Option**: Use the `-ListClusters` parameter to list all clusters in your kubeconfig without performing any cleanup, with a count of total clusters displayed.
+- **Merge Kubeconfig Files**: Easily merge multiple `kubeconfig` files into a single config file using the `-MergeConfigs` parameter.
 - **Verbose Output**: Provides detailed logging about cluster reachability and other operations using the `-Verbose` flag.
 
 ## Requirements
@@ -55,9 +56,13 @@ Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "cluster1,cl
 - **`-Backup`**: Set to `false` if you don't want a backup to be created. Defaults to `true`.
 - **`-Force`**: Forces cleanup even if no clusters are reachable. Use this when you want to proceed with cleanup despite network issues.
 - **`-Verbose`**: Enables detailed logging during the cleanup process, including information about cluster reachability, backup creation, and module imports.
-- **`-ListClusters`**: Lists all clusters in the kubeconfig file without performing any cleanup.
+- **`-ListClusters`**: Lists all clusters in the kubeconfig file without performing any cleanup, and displays the total number of clusters.
+- **`-MergeConfigs`**: Merges multiple `kubeconfig` files into one. Takes an array of file paths as input.
+- **`-DestinationConfig`**: Path to save the merged `kubeconfig` file. If not specified, the default `"$HOME\.kube\config"` will be used.
 
-### Example
+### Examples
+
+#### Cleaning up your kubeconfig
 
 To exclude specific clusters from removal and clean up your kubeconfig:
 
@@ -72,11 +77,25 @@ If no clusters are reachable and you still want to proceed:
 Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Force
 ```
 
-To list all clusters without performing any cleanup:
+#### Merging multiple `kubeconfig` files
+
+To merge multiple `kubeconfig` files into a single config file:
+
+```powershell
+Invoke-KubeTidy -MergeConfigs "config1.yaml","config2.yaml","config3.yaml" -DestinationConfig "$HOME\.kube\config"
+```
+
+This will merge the `config1.yaml`, `config2.yaml`, and `config3.yaml` into the destination config file (`$HOME\.kube\config` by default).
+
+#### Listing clusters
+
+To list all clusters without performing any cleanup, along with the count of clusters:
 
 ```powershell
 Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ListClusters
 ```
+
+#### Verbose logging for detailed output
 
 For detailed logging during the execution:
 
@@ -97,7 +116,21 @@ VERBOSE: Cluster aks-prod-cluster is reachable via HTTPS.
 VERBOSE: Removed the following clusters: aks-old-cluster
 ```
 
-## Output
+### List Clusters Output Example
+
+When using the `-ListClusters` parameter, you will receive output like this:
+
+```
+Listing all clusters in KubeConfig file:
+
+Cluster: cluster1
+Cluster: cluster2
+Cluster: cluster3
+
+Total Clusters: 3
+```
+
+## Output Example
 
 After execution, you will receive a summary like the following:
 

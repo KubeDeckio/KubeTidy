@@ -4,6 +4,21 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.10] - 2024-09-27
+
+### Added
+- **Clickable Backup Path**: Backup path is now clickable if the terminal supports it, making it easier to navigate to backup files.
+- **Manual YAML Handling for Single Entries**: Ensured proper YAML structure when only one cluster, context, or user remains in the kubeconfig file.
+
+### Changed
+- **Environment Detection**: Enhanced WSL detection and config path handling for both native Linux/macOS and WSL environments.
+- **KubeConfig Path Handling**: Improved logic for determining the kubeconfig path in different environments (Windows, WSL, Linux/macOS).
+
+### Fixed
+- **Cluster Removal Formatting**: Fixed an issue where the kubeconfig format would break when cleaning up to a single cluster, context, or user.
+- **Cluster Kept Count**: fixed so the number is correct. It was 1 out before.
+
+
 ## [0.0.9] - 2024-09-26
 
 ### Fixed
@@ -31,11 +46,3 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ### Added
 - Initial release of **KubeTidy**, featuring Kubernetes cluster reachability checks and cleanup of unreachable clusters, contexts, and users.
-
----
-
-### How to Use the Changelog
-
-1. Make sure to increment the version number in the changelog with every new release.
-2. Keep the changes concise and organized under headings like "Added", "Changed", "Fixed", and "Removed" to ensure easy tracking of what was done in each version.
-

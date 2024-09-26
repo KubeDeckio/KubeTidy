@@ -17,6 +17,7 @@
 - **Backup Creation:** Automatically creates a backup of the original kubeconfig before performing any cleanup.
 - **Summary Report:** Provides a neat summary of how many clusters were checked, removed, and retained.
 - **Force Cleanup Option:** If all clusters are unreachable, KubeTidy can force a cleanup using the `-Force` parameter.
+- **List Clusters Option**: Use the `-ListClusters` parameter to simply list all clusters in your kubeconfig without performing any cleanup.
 - **Verbose Output**: Provides detailed logging about cluster reachability and other operations using the `-Verbose` flag.
 
 ## Requirements
@@ -44,7 +45,7 @@ Ensure you have the required dependencies installed by running the tool. It will
 Once installed, run **KubeTidy** to clean your kubeconfig:
 
 ```powershell
-Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "cluster1,cluster2,cluster3"
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "cluster1,cluster2,cluster3"
 ```
 
 ### Parameters
@@ -54,25 +55,32 @@ Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "clus
 - **`-Backup`**: Set to `false` if you don't want a backup to be created. Defaults to `true`.
 - **`-Force`**: Forces cleanup even if no clusters are reachable. Use this when you want to proceed with cleanup despite network issues.
 - **`-Verbose`**: Enables detailed logging during the cleanup process, including information about cluster reachability, backup creation, and module imports.
+- **`-ListClusters`**: Lists all clusters in the kubeconfig file without performing any cleanup.
 
 ### Example
 
 To exclude specific clusters from removal and clean up your kubeconfig:
 
 ```powershell
-Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster"
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster"
 ```
 
 If no clusters are reachable and you still want to proceed:
 
 ```powershell
-Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Force
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Force
+```
+
+To list all clusters without performing any cleanup:
+
+```powershell
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ListClusters
 ```
 
 For detailed logging during the execution:
 
 ```powershell
-Invoke-KubeTidyCleanup -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Verbose
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Verbose
 ```
 
 ### Verbose Output Example
@@ -101,6 +109,10 @@ After execution, you will receive a summary like the following:
 ║  Clusters Kept:       24                       ║
 ╚════════════════════════════════════════════════╝
 ```
+
+## Changelog
+
+All notable changes to this project are documented in the [CHANGELOG](./CHANGELOG.md).
 
 ## License
 

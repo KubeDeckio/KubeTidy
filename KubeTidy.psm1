@@ -18,6 +18,9 @@
 .PARAMETER Force
     Forces cleanup even if no clusters are reachable. Defaults to false.
 
+.PARAMETER ListClusters
+    Displays a list of all clusters in the kubeconfig file without performing cleanup.
+
 .PARAMETER Verbose
     Enables verbose logging for detailed output.
 #>
@@ -27,11 +30,26 @@ param (
     [string]$KubeConfigPath = "",
     [string]$ExclusionList = "",
     [bool]$Backup = $true,
-    [switch]$Force
+    [switch]$Force,
+    [switch]$ListClusters
 )
 
 # Split the ExclusionList by commas to create an array of clusters
 $ExclusionArray = $ExclusionList -split ',' | ForEach-Object { $_.Trim() }
+
+# Function to show KubeTidy Banner
+function Show-KubeTidyBanner {
+    # Display ASCII art and start message
+    Write-Host ""
+    Write-Host " ██╗  ██╗██╗   ██╗██████╗ ███████╗████████╗██╗██████╗ ██╗   ██╗" -ForegroundColor Cyan
+    Write-Host " ██║ ██╔╝██║   ██║██╔══██╗██╔════╝╚══██╔══╝██║██╔══██╗╚██╗ ██╔╝" -ForegroundColor Cyan
+    Write-Host " █████╔╝ ██║   ██║██████╔╝█████╗     ██║   ██║██║  ██║ ╚████╔╝ " -ForegroundColor Cyan
+    Write-Host " ██╔═██╗ ██║   ██║██╔══██╗██╔══╝     ██║   ██║██║  ██║  ╚██╔╝  " -ForegroundColor Cyan
+    Write-Host " ██║  ██╗╚██████╔╝██████╔╝███████╗   ██║   ██║██████╔╝   ██║   " -ForegroundColor Cyan
+    Write-Host " ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝╚═════╝    ╚═╝   " -ForegroundColor Cyan
+    Write-Host ""
+}
+
 
 # Function to create a backup of the kubeconfig file
 function New-Backup {
@@ -69,13 +87,32 @@ function Test-ClusterReachability {
     }
 }
 
+# Function to list all clusters in the kubeconfig file
+function Get-AllClusters {
+    [CmdletBinding()]
+    param (
+        [string]$KubeConfigPath
+    )
+
+    Write-Host "Listing all clusters in KubeConfig file:" -ForegroundColor Yellow
+    Write-Host ""
+    $kubeConfigContent = Get-Content -Raw -Path $KubeConfigPath
+    $kubeConfig = $kubeConfigContent | ConvertFrom-Yaml
+
+    foreach ($cluster in $kubeConfig.clusters) {
+        $clusterName = $cluster.name
+        Write-Host "Cluster: $clusterName" -ForegroundColor Cyan
+    }
+}
+
 # Main Cleanup Function
-function Invoke-KubeTidyCleanup {
+function Invoke-KubeTidy {
     [CmdletBinding()]
     param (
         [string]$KubeConfigPath,
         [array]$ExclusionArray,
-        [switch]$Force
+        [switch]$Force,
+        [switch]$ListClusters
     )
 
     # Ensure that the $KubeConfigPath is valid
@@ -95,15 +132,15 @@ function Invoke-KubeTidyCleanup {
     Import-Module powershell-yaml -ErrorAction Stop
     Write-Verbose "powershell-yaml module loaded successfully."
 
-    # Display ASCII art and start message
-    Write-Host ""
-    Write-Host " ██╗  ██╗██╗   ██╗██████╗ ███████╗████████╗██╗██████╗ ██╗   ██╗" -ForegroundColor Cyan
-    Write-Host " ██║ ██╔╝██║   ██║██╔══██╗██╔════╝╚══██╔══╝██║██╔══██╗╚██╗ ██╔╝" -ForegroundColor Cyan
-    Write-Host " █████╔╝ ██║   ██║██████╔╝█████╗     ██║   ██║██║  ██║ ╚████╔╝ " -ForegroundColor Cyan
-    Write-Host " ██╔═██╗ ██║   ██║██╔══██╗██╔══╝     ██║   ██║██║  ██║  ╚██╔╝  " -ForegroundColor Cyan
-    Write-Host " ██║  ██╗╚██████╔╝██████╔╝███████╗   ██║   ██║██████╔╝   ██║   " -ForegroundColor Cyan
-    Write-Host " ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝   ╚═╝   ╚═╝╚═════╝    ╚═╝   " -ForegroundColor Cyan
-    Write-Host ""
+    # If ListClusters flag is provided, list clusters and exit
+    if ($ListClusters) {
+        Show-KubeTidyBanner
+        Get-AllClusters -KubeConfigPath $KubeConfigPath
+        return
+    }
+
+    # Call the function wherever you need to show the banner
+    Show-KubeTidyBanner
     Write-Host "Starting KubeTidy cleanup..." -ForegroundColor Yellow
     Write-Host ""
 

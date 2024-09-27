@@ -50,7 +50,6 @@ function Show-KubeTidyBanner {
     Write-Host ""
 }
 
-
 # Function to create a backup of the kubeconfig file
 function New-Backup {
     [CmdletBinding()]
@@ -59,7 +58,9 @@ function New-Backup {
     )
     $backupPath = "$KubeConfigPath.bak_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
     Copy-Item -Path $KubeConfigPath -Destination $backupPath
-    Write-Host "Backup created at $backupPath" -ForegroundColor Green
+    # If the terminal supports clickable links, this will make the path clickable
+    $clickableLink = "`e]8;;file://$backupPath`e\$backupPath`e]8;;`e\" 
+    Write-Host "Backup created at $clickableLink" -ForegroundColor Green
     Write-Verbose "Backup of KubeConfig created at path: $backupPath"
 }
 
@@ -117,9 +118,37 @@ function Invoke-KubeTidy {
 
     # Ensure that the $KubeConfigPath is valid
     if (-not $KubeConfigPath) {
-        $homePath = [System.Environment]::GetFolderPath("UserProfile")
-        Write-Verbose "No KubeConfig path provided. Using default: $homePath\.kube\config"
-        $KubeConfigPath = "$homePath\.kube\config"
+        # Function to detect if running inside WSL
+        function Test-WSL {
+            if (Test-Path "/proc/version") {
+                $versionInfo = Get-Content "/proc/version"
+                return $versionInfo -match "Microsoft"
+            }
+            return $false
+        }
+
+        # Determine the correct kubeconfig path based on the environment
+        if ($IsWindows) {
+            # Windows: Use the standard USERPROFILE path
+            $KubeConfigPath = "$env:USERPROFILE\.kube\config"
+        }
+        elseif (Test-WSL) {
+            # WSL: Use wslvar to get the Windows USERPROFILE and convert it to WSL path using wslpath
+            $windowsHomePath = wslpath "$(wslvar USERPROFILE)"
+            $KubeConfigPath = "$windowsHomePath/.kube/config"
+
+            if (-not $KubeConfigPath) {
+                Write-Error "Could not locate the Windows .kube config path in WSL."
+                return
+            }
+        }
+        else {
+            # Native Linux/macOS: Use the regular home directory path
+            $KubeConfigPath = "$HOME/.kube/config"
+        }
+
+        # Output the determined path (for debugging or informational purposes)
+        Write-Host "KubeConfig Path: $KubeConfigPath"
     }
 
     # Check if the powershell-yaml module is installed; if not, install it
@@ -208,24 +237,61 @@ function Invoke-KubeTidy {
         Write-Verbose "No clusters were marked for removal."
     }
 
-    # Save updated kubeconfig back to the file
-    Write-Verbose "Saving the updated KubeConfig to $KubeConfigPath"
-    $kubeConfig | ConvertTo-Yaml | Set-Content -Path $KubeConfigPath
-    Write-Host "Kubeconfig cleaned and saved." -ForegroundColor Green
+    # Manually build the YAML for clusters, contexts, and users
+    $clustersYaml = @"
+clusters: `n
+"@
+    foreach ($cluster in $kubeConfig.clusters) {
+        $clustersYaml += "  - cluster:`n"
+        $clustersYaml += "      certificate-authority-data: $($cluster.cluster.'certificate-authority-data')`n"
+        $clustersYaml += "      server: $($cluster.cluster.server)`n"
+        $clustersYaml += "    name: $($cluster.name)`n"
+    }
 
+    $contextsYaml = @"
+contexts: `n
+"@
+    foreach ($context in $kubeConfig.contexts) {
+        $contextsYaml += "  - context:`n"
+        $contextsYaml += "      cluster: $($context.context.cluster)`n"
+        $contextsYaml += "      user: $($context.context.user)`n"
+        $contextsYaml += "    name: $($context.name)`n"
+    }
+
+    $usersYaml = @"
+users: `n
+"@
+    foreach ($user in $kubeConfig.users) {
+        $usersYaml += "  - name: $($user.name)`n"
+        $usersYaml += "    user:`n"
+        $usersYaml += "      client-certificate-data: $($user.user.'client-certificate-data')`n"
+        $usersYaml += "      client-key-data: $($user.user.'client-key-data')`n"
+    }
+
+    # Manually define the top-level fields
+    $kubeConfigHeader = @"
+apiVersion: v1
+kind: Config
+preferences: {} `n
+"@
+
+    # Combine everything and save to file
+    $fullKubeConfigYaml = $kubeConfigHeader + $clustersYaml + $contextsYaml + $usersYaml
+    $fullKubeConfigYaml | Set-Content -Path $KubeConfigPath
+
+    Write-Host "Kubeconfig cleaned and saved." -ForegroundColor Green
     # Display the summary with consistent padding
-    $retainedCount = $kubeConfig.clusters.Count
     $removedCount = $removedClusters.Count
     $checkedClustersText = "{0,5}" -f $checkedClusters
     $removedCountText = "{0,5}" -f $removedCount
-    $retainedCountText = "{0,5}" -f $retainedCount
+    $retainedCountText = "{0,5}" -f ($checkedClusters - $removedCount)
 
     Write-Host ""
     Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Magenta
     Write-Host "║               KubeTidy Summary                 ║" -ForegroundColor Magenta
     Write-Host "╠════════════════════════════════════════════════╣" -ForegroundColor Magenta
-    Write-Host "║  Clusters Checked: $checkedClustersText                       ║" -ForegroundColor Yellow
-    Write-Host "║  Clusters Removed: $removedCountText                       ║" -ForegroundColor Red
-    Write-Host "║  Clusters Kept:    $retainedCountText                       ║" -ForegroundColor Green
+    Write-Host "║  Clusters Checked:    $checkedClustersText                    ║" -ForegroundColor Yellow
+    Write-Host "║  Clusters Removed:    $removedCountText                    ║" -ForegroundColor Red
+    Write-Host "║  Clusters Kept:       $retainedCountText                    ║" -ForegroundColor Green
     Write-Host "╚════════════════════════════════════════════════╝" -ForegroundColor Magenta
 }

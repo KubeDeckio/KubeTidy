@@ -64,6 +64,7 @@ To exclude specific clusters from removal and clean up your kubeconfig:
 ```powershell
 Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster"
 ```
+![KubeTidy Cleanup Summary](./images/summary.png)
 
 If no clusters are reachable and you still want to proceed:
 

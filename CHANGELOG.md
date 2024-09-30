@@ -4,6 +4,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.11] - 2024-09-30
+
+### Added
+- **Merge Kubeconfig Files:** Introduced the ability to merge multiple kubeconfig files into one using the `-MergeConfigs` parameter. Users can specify multiple kubeconfig file paths to be merged into the destination kubeconfig file.
+- **DestinationConfig Parameter:** Added the `-DestinationConfig` parameter for specifying the output path of the merged kubeconfig file. If not specified, it defaults to `"$HOME/.kube/config"`.
+- **Cluster Count Output:** The `-ListClusters` parameter now also outputs the total number of clusters present in the kubeconfig file after listing them.
+
 ## [0.0.10] - 2024-09-27
 
 ### Added

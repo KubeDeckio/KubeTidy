@@ -1,10 +1,10 @@
 <#
 .SYNOPSIS
-    KubeTidy: A script to clean up your Kubernetes config file by removing unreachable clusters and associated users and contexts.
+    KubeTidy: A script to clean up your Kubernetes config file by removing unreachable clusters and associated users and contexts, or merge multiple config files.
 
 .DESCRIPTION
     This script removes unreachable clusters from the kubeconfig file and ensures that associated 
-    users and contexts that reference the removed clusters are also removed.
+    users and contexts that reference the removed clusters are also removed. It can also merge multiple kubeconfig files.
 
 .PARAMETER KubeConfigPath
     Path to your kubeconfig file. Defaults to the default Kubernetes location if not specified.
@@ -21,6 +21,12 @@
 .PARAMETER ListClusters
     Displays a list of all clusters in the kubeconfig file without performing cleanup.
 
+.PARAMETER MergeConfigs
+    An array of kubeconfig files to merge into the destination kubeconfig file.
+
+.PARAMETER DestinationConfig
+    The path to save the merged kubeconfig file. Defaults to the default location if not specified.
+
 .PARAMETER Verbose
     Enables verbose logging for detailed output.
 #>
@@ -31,7 +37,9 @@ param (
     [string]$ExclusionList = "",
     [bool]$Backup = $true,
     [switch]$Force,
-    [switch]$ListClusters
+    [switch]$ListClusters,
+    [string[]]$MergeConfigs,
+    [string]$DestinationConfig = ""
 )
 
 # Split the ExclusionList by commas to create an array of clusters
@@ -97,23 +105,141 @@ function Get-AllClusters {
 
     Write-Host "Listing all clusters in KubeConfig file:" -ForegroundColor Yellow
     Write-Host ""
+    
+    # Read the kubeconfig content
     $kubeConfigContent = Get-Content -Raw -Path $KubeConfigPath
     $kubeConfig = $kubeConfigContent | ConvertFrom-Yaml
 
-    foreach ($cluster in $kubeConfig.clusters) {
-        $clusterName = $cluster.name
-        Write-Host "Cluster: $clusterName" -ForegroundColor Cyan
+    # Get the total number of clusters
+    $clusterCount = $kubeConfig.clusters.Count
+
+    # Check if there are clusters in the file
+    if ($clusterCount -gt 0) {
+        # List the clusters
+        foreach ($cluster in $kubeConfig.clusters) {
+            $clusterName = $cluster.name
+            Write-Host "Cluster: $clusterName" -ForegroundColor Cyan
+        }
+        
+        # Output the total number of clusters
+        Write-Host ""
+        Write-Host "Total Clusters: $clusterCount" -ForegroundColor Green
+    } else {
+        Write-Host "No clusters found in the kubeconfig file." -ForegroundColor Red
     }
 }
 
-# Main Cleanup Function
+
+# Function to merge kubeconfig files
+# Function to merge kubeconfig files
+function Merge-KubeConfigs {
+    [CmdletBinding()]
+    param (
+        [string[]]$MergeConfigs,
+        [string]$DestinationConfig
+    )
+
+    # Initialize empty hash tables to hold the merged clusters, contexts, and users
+    $mergedClusters = @{}
+    $mergedContexts = @{}
+    $mergedUsers = @{}
+
+    foreach ($configPath in $MergeConfigs) {
+        Write-Verbose "Merging config from $configPath"
+        $configContent = Get-Content -Raw -Path $configPath
+        $config = $configContent | ConvertFrom-Yaml
+
+        # Merge clusters
+        foreach ($cluster in $config.clusters) {
+            if (-not $mergedClusters.ContainsKey($cluster.name)) {
+                $mergedClusters[$cluster.name] = $cluster
+            }
+        }
+
+        # Merge contexts
+        foreach ($context in $config.contexts) {
+            if (-not $mergedContexts.ContainsKey($context.name)) {
+                $mergedContexts[$context.name] = $context
+            }
+        }
+
+        # Merge users
+        foreach ($user in $config.users) {
+            if (-not $mergedUsers.ContainsKey($user.name)) {
+                $mergedUsers[$user.name] = $user
+            }
+        }
+    }
+
+    # Create the merged kubeconfig with the correct structure
+    $mergedKubeConfig = @"
+apiVersion: v1
+kind: Config
+preferences: {} `n
+"@
+
+    # Convert clusters, contexts, and users to YAML
+    $clustersYaml = @"
+clusters: `n
+"@
+    foreach ($cluster in $mergedClusters.Values) {
+        $clustersYaml += "  - cluster:`n"
+        $clustersYaml += "      certificate-authority-data: $($cluster.cluster.'certificate-authority-data')`n"
+        $clustersYaml += "      server: $($cluster.cluster.server)`n"
+        $clustersYaml += "    name: $($cluster.name)`n"
+    }
+
+    $contextsYaml = @"
+contexts: `n
+"@
+    foreach ($context in $mergedContexts.Values) {
+        $contextsYaml += "  - context:`n"
+        $contextsYaml += "      cluster: $($context.context.cluster)`n"
+        $contextsYaml += "      user: $($context.context.user)`n"
+        $contextsYaml += "    name: $($context.name)`n"
+    }
+
+    $usersYaml = @"
+users: `n
+"@
+    foreach ($user in $mergedUsers.Values) {
+        $usersYaml += "  - name: $($user.name)`n"
+        $usersYaml += "    user:`n"
+        $usersYaml += "      client-certificate-data: $($user.user.'client-certificate-data')`n"
+        $usersYaml += "      client-key-data: $($user.user.'client-key-data')`n"
+    }
+
+    # Combine everything into one YAML structure
+    $fullKubeConfigYaml = $mergedKubeConfig + $clustersYaml + $contextsYaml + $usersYaml
+
+    # Save the merged config to the destination file
+    $fullKubeConfigYaml | Set-Content -Path $DestinationConfig
+    Write-Host "Merged kubeconfig saved to $DestinationConfig" -ForegroundColor Green
+
+    # Display summary of merged entities
+    Write-Host ""
+    Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Magenta
+    Write-Host "║            KubeTidy Merge Summary              ║" -ForegroundColor Magenta
+    Write-Host "╠════════════════════════════════════════════════╣" -ForegroundColor Magenta
+    Write-Host "║  Files Merged:     $($MergeConfigs.Count)                           ║" -ForegroundColor Yellow
+    Write-Host "║  Clusters Merged:  $($mergedClusters.Count)                          ║" -ForegroundColor Cyan
+    Write-Host "║  Contexts Merged:  $($mergedContexts.Count)                          ║" -ForegroundColor Cyan
+    Write-Host "║  Users Merged:     $($mergedUsers.Count)                          ║" -ForegroundColor Cyan
+    Write-Host "╚════════════════════════════════════════════════╝" -ForegroundColor Magenta
+    Write-Host ""
+}
+
+
+# Main Cleanup or Merge Function
 function Invoke-KubeTidy {
     [CmdletBinding()]
     param (
         [string]$KubeConfigPath,
         [array]$ExclusionList,
         [switch]$Force,
-        [switch]$ListClusters
+        [switch]$ListClusters,
+        [string[]]$MergeConfigs,
+        [string]$DestinationConfig
     )
 
     # Ensure that the $KubeConfigPath is valid
@@ -160,6 +286,17 @@ function Invoke-KubeTidy {
     # Import the powershell-yaml module to ensure it's loaded
     Import-Module powershell-yaml -ErrorAction Stop
     Write-Verbose "powershell-yaml module loaded successfully."
+
+    # If MergeConfigs is provided, perform merging
+    if ($MergeConfigs) {
+        if (-not $DestinationConfig) {
+            $DestinationConfig = "$env:USERPROFILE\.kube\config"
+        }
+        Show-KubeTidyBanner
+        Write-Host "Merging kubeconfig files..." -ForegroundColor Yellow
+        Merge-KubeConfigs -MergeConfigs $MergeConfigs -DestinationConfig $DestinationConfig
+        return
+    }
 
     # If ListClusters flag is provided, list clusters and exit
     if ($ListClusters) {
@@ -280,6 +417,7 @@ preferences: {} `n
     $fullKubeConfigYaml | Set-Content -Path $KubeConfigPath
 
     Write-Host "Kubeconfig cleaned and saved." -ForegroundColor Green
+
     # Display the summary with consistent padding
     $removedCount = $removedClusters.Count
     $checkedClustersText = "{0,5}" -f $checkedClusters

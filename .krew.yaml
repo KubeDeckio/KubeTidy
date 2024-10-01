@@ -1,0 +1,31 @@
+apiVersion: krew.googlecontainertools.github.com/v1alpha2
+kind: Plugin
+metadata:
+  name: evict-pod
+spec:
+  version: {{ .TagName }}
+  homepage: https://github.com/PixelRobots/KubeTidy
+  platforms:
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: amd64
+    {{addURIAndSha "https://github.com/PixelRobots/KubeTidy/releases/download/{{ .TagName }}/KubeTidy-darwin-amd64-{{ .TagName }}.tar.gz" .TagName }}
+    bin: kubectl-KubeTidy
+  - selector:
+      matchLabels:
+        os: linux
+        arch: amd64
+    {{addURIAndSha "https://github.com/PixelRobots/KubeTidy/releases/download/{{ .TagName }}/KubeTidy-linux-amd64-{{ .TagName }}.tar.gz" .TagName }}
+    bin: kubectl-KubeTidy
+  shortDescription: "A tool to clean up your Kubernetes config."
+  description: |
+    KubeTidy cleans up your Kubernetes config file by removing unreachable clusters and associated users and contexts or merging multiple config files.
+    
+    **Requirements:**
+    - PowerShell 7 or higher must be installed.
+    
+    Read more documentation at: https://github.com/PixelRobots/KubeTidy
+  caveats: |
+    **Requirements:**
+    - PowerShell 7 or higher must be installed.

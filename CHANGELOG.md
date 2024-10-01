@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.14] - 2024-10-01
+
+### Added
+- **Krew Support**: Added support for Krew, allowing users to install and manage KubeTidy as a plugin in their Kubernetes environment.
+- **Release Notes Automation**: Integrated automation to update GitHub release notes with entries from the CHANGELOG.md based on the version being released.
+
+### Changed
+- **Refactor Release Process**: Improved the release workflow by adding automated steps for generating tar files and checksums, ensuring a smoother release experience.
+
+### Fixed
+- **Restored Backup feature** Whilst splitting out files, Backup parameter went missing. Added back now.
+- Minor bug fixes and improvements to enhance performance and stability.
+
+## [0.0.13] - 2024-10-01
+
+### Fixed
+- **Importing sub modules error**: Fixed an issue where the sub modules were not being imported.
+
 ## [0.0.12] - 2024-10-01
 
 ### Added

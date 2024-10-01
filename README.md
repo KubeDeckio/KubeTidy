@@ -19,6 +19,7 @@
 - **Force Cleanup Option:** If all clusters are unreachable, KubeTidy can force a cleanup using the `-Force` parameter.
 - **List Clusters Option**: Use the `-ListClusters` parameter to list all clusters in your kubeconfig without performing any cleanup, with a count of total clusters displayed.
 - **Merge Kubeconfig Files**: Easily merge multiple `kubeconfig` files into a single config file using the `-MergeConfigs` parameter.
+- **Dry Run Mode**: Use the `-DryRun` parameter to simulate cleanup or merging without actually making any changes to your kubeconfig files.
 - **Verbose Output**: Provides detailed logging about cluster reachability and other operations using the `-Verbose` flag.
 
 ## Requirements
@@ -55,10 +56,11 @@ Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "cluster1,cl
 - **`-ExclusionList`**: A comma-separated list of clusters to exclude from removal. (Useful for clusters requiring VPN or temporary networks.)
 - **`-Backup`**: Set to `false` if you don't want a backup to be created. Defaults to `true`.
 - **`-Force`**: Forces cleanup even if no clusters are reachable. Use this when you want to proceed with cleanup despite network issues.
-- **`-Verbose`**: Enables detailed logging during the cleanup process, including information about cluster reachability, backup creation, and module imports.
 - **`-ListClusters`**: Lists all clusters in the kubeconfig file without performing any cleanup, and displays the total number of clusters.
 - **`-MergeConfigs`**: Merges multiple `kubeconfig` files into one. Takes an array of file paths as input.
 - **`-DestinationConfig`**: Path to save the merged `kubeconfig` file. If not specified, the default `"$HOME\.kube\config"` will be used.
+- **`-DryRun`**: Simulates the cleanup or merging process without making any changes. Shows what would happen without modifying the `kubeconfig` file.
+- **`-Verbose`**: Enables detailed logging during the cleanup process, including information about cluster reachability, backup creation, and module imports.
 
 ### Examples
 
@@ -77,6 +79,16 @@ If no clusters are reachable and you still want to proceed:
 Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -Force
 ```
 
+#### Simulating Cleanup with Dry Run
+
+To simulate the cleanup process without making any actual changes:
+
+```powershell
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "aks-prod-cluster,aks-staging-cluster" -DryRun
+```
+
+This will display the summary of the cleanup that **would** be performed but does not modify the actual `kubeconfig`.
+
 #### Merging multiple `kubeconfig` files
 
 To merge multiple `kubeconfig` files into a single config file:
@@ -86,6 +98,16 @@ Invoke-KubeTidy -MergeConfigs "config1.yaml","config2.yaml","config3.yaml" -Dest
 ```
 
 This will merge the `config1.yaml`, `config2.yaml`, and `config3.yaml` into the destination config file (`$HOME\.kube\config` by default).
+
+#### Simulating Merge with Dry Run
+
+To simulate the merging process without modifying the destination file:
+
+```powershell
+Invoke-KubeTidy -MergeConfigs "config1.yaml","config2.yaml","config3.yaml" -DestinationConfig "$HOME\.kube\config" -DryRun
+```
+
+This will show how the `kubeconfig` files would be merged without updating the destination file.
 
 #### Listing clusters
 

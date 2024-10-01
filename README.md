@@ -65,7 +65,7 @@ To install **KubeTidy** as a `kubectl` plugin using [Krew](https://krew.sigs.k8s
    After installation, you can run **KubeTidy** as a `kubectl` plugin:
 
    ```bash
-   kubectl kubetidy --kubeconfig "$HOME/.kube/config" --exclusion-list "cluster1,cluster2"
+   kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exclusionlist "cluster1,cluster2"
    ```
 
 4. **Upgrade KubeTidy via Krew**
@@ -96,12 +96,12 @@ You can use the same parameters as described in the [Parameters](#Parameters) se
 
 - To simulate cleanup without making changes:
   ```bash
-  kubectl kubetidy --kubeconfig "$HOME/.kube/config" --exclusion-list "cluster1,cluster2" --dry-run
+  kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exclusionlist "cluster1,cluster2" -dryrun
   ```
 
 - To list all clusters:
   ```bash
-  kubectl kubetidy --kubeconfig "$HOME/.kube/config" --list-clusters
+  kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listclusters
   ```
 
 ## Parameters

@@ -4,7 +4,7 @@
 
 # Define the path to the local Private directory and Krew storage directory for KubeTidy
 $localPrivateDir = "./Private"  # Local Private directory
-$krewStorageDir = "$HOME/.krew/store/KubeTidy"  # Krew storage directory
+$krewStorageDir = "$HOME/.krew/store/kubetidy"  # Krew storage directory
 
 # Check if the local Private directory exists
 if (Test-Path -Path $localPrivateDir) {

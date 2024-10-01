@@ -11,14 +11,14 @@ spec:
         os: darwin
         arch: amd64
     uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.14/KubeTidy-darwin-amd64-v0.0.14.tar.gz
-    sha256: "14443c784daa85a9be713f77f1784df27ff88ab6ee3b4c0d3ebb040ffb5ff6b8"
+    sha256: "d198611b92865943694322037b2a6c508babf82035ec31e4019396f8452afaf3"
     bin: kubectl-KubeTidy
   - selector:
       matchLabels:
         os: linux
         arch: amd64
     uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.14/KubeTidy-linux-amd64-v0.0.14.tar.gz
-    sha256: "14443c784daa85a9be713f77f1784df27ff88ab6ee3b4c0d3ebb040ffb5ff6b8"
+    sha256: "d198611b92865943694322037b2a6c508babf82035ec31e4019396f8452afaf3"
     bin: kubectl-KubeTidy
   shortDescription: "A tool to clean up your Kubernetes config."
   description: |

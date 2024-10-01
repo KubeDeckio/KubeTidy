@@ -57,7 +57,7 @@ To install **KubeTidy** as a `kubectl` plugin using [Krew](https://krew.sigs.k8s
    Once Krew is installed, use the following commands to install **KubeTidy** via Krew:
 
    ```bash
-   curl -O https://raw.githubusercontent.com/PixelRobots/KubeTidy/main/KubeTidy.yaml
+   curl -H "Cache-Control: no-cache" -O https://raw.githubusercontent.com/PixelRobots/KubeTidy/main/KubeTidy.yaml
 
    kubectl krew install --manifest="./KubeTidy.yaml"
    ```

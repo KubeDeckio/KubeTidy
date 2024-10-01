@@ -2,8 +2,8 @@ name: Publish PowerShell Module to PowerShell Gallery
 
 on:
   push:
-    branches:
-      - main
+    tags:
+      - 'v*'
   release:
     types:
       - published

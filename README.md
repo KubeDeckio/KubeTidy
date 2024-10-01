@@ -1,5 +1,3 @@
-Certainly! Here's the full README file with the suggested updates:
-
 <p align="center">
   <img src="./images/KubeTidy.png" />
 </p>

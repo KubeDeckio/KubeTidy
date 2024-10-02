@@ -12,40 +12,6 @@ color_scheme: dark
 
 permalink: pretty
 
-defaults:
-  - scope:
-      path: "docs" # an empty string here means all files in the project
-      type: "pages"
-    values:
-      layout: "default"
-
-exclude:
-  # from https://github.com/jekyll/jekyll/blob/master/lib/site_template/_config.yml:
-  - .sass-cache/
-  - .jekyll-cache/
-  - gemfiles/
-  - Gemfile
-  - Gemfile.lock
-  - node_modules/
-  - vendor/bundle/
-  - vendor/cache/
-  - vendor/gems/
-  - vendor/ruby/
-  # specific to the theme website:
-  - bin/
-  - lib/
-  - "*.gemspec"
-  - "*.gem"
-  - LICENSE.txt
-  - package.json
-  - package-lock.json
-  - Rakefile
-  - README.md
-  - CODE_OF_CONDUCT.md
-  - docker-compose.yml
-  - Dockerfile
-  # theme test code
-  - fixtures/
 
 # Set a path/url to a logo that will be displayed instead of the title
 #logo: "/assets/images/just-the-docs.png"
@@ -99,13 +65,8 @@ mermaid:
 # Enable or disable heading anchors
 heading_anchors: true
 
-# Aux links for the upper right navigation
-aux_links:
-  "Just the Docs on GitHub":
-    - "https://github.com/just-the-docs/just-the-docs"
-
 # Makes Aux links open in a new tab. Default is false
-aux_links_new_tab: false
+aux_links_new_tab: trur
 
 # Enable or disable the side/mobile menu globally
 # Nav menu can also be selectively enabled or disabled using page variables or the minimal layout
@@ -148,9 +109,6 @@ gh_edit_branch: "main" # the branch that your docs is served from
 # gh_edit_source: docs # the source that your files originate from
 gh_edit_view_mode: "tree" # "tree" or "edit" if you want the user to jump into the editor immediately
 
-# Color scheme currently only supports "dark", "light"/nil (default), or a custom scheme that you define
-color_scheme: nil
-
 callouts_level: quiet # or loud
 callouts:
   highlight:
@@ -167,12 +125,6 @@ callouts:
   warning:
     title: Warning
     color: red
-
-# Google Analytics Tracking (optional)
-# Supports a CSV of tracking ID strings (eg. "UA-1234567-89,G-1AB234CDE5")
-# Note: the main Just the Docs site does *not* use Google Analytics.
-# ga_tracking: UA-2709176-10,G-5FG1HLH3XQ
-# ga_tracking_anonymize_ip: true # Use GDPR compliant Google Analytics settings (true/nil by default)
 
 plugins:
   - jekyll-seo-tag

@@ -7,6 +7,15 @@
 
 </br>
 
+![Publish Module to PowerShell Gallery](https://github.com/PixelRobots/KubeTidy/actions/workflows/publish-psgal.yml/badge.svg)
+[![Publish Plugin to Krew](https://github.com/PixelRobots/KubeTidy/actions/workflows/publish-krewplugin.yaml/badge.svg)](https://github.com/PixelRobots/KubeTidy/actions/workflows/publish-krewplugin.yaml)
+![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/KubeTidy.svg)
+![Downloads](https://img.shields.io/powershellgallery/dt/KubeTidy.svg)
+![License](https://img.shields.io/github/license/PixelRobots/KubeTidy.svg)
+
+---
+
+
 **KubeTidy** is a PowerShell tool designed to clean up your Kubernetes configuration file by removing unreachable clusters, along with associated users and contexts. It simplifies the management of your `kubeconfig` by ensuring that only reachable and valid clusters remain, making it easier to work with multiple Kubernetes environments. **KubeTidy** also supports merging multiple `kubeconfig` files into one.
 
 ## Features

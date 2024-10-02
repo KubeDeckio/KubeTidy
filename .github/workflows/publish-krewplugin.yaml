@@ -1,9 +1,7 @@
 name: Publish Plugin to Krew
 
 on:
-  push:
-    branches:
-      - '*'    
+  push:  
     tags:
       - 'v*'       
   release:

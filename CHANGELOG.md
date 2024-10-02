@@ -4,6 +4,19 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.15] - 2024-10-02
+
+### Added
+- **List Contexts Option**: Added the `-ListContexts` parameter, allowing users to list all available contexts in the kubeconfig.
+- **Export Contexts Option**: Introduced the `-ExportContexts` parameter for exporting specific contexts from the kubeconfig. This can be combined with the `-DestinationConfig` parameter to specify the output path.
+- **Preserve Current Context**: Added logic to preserve the current context in the cleaned kubeconfig unless it belongs to a removed cluster.
+
+### Changed
+- **Reusable DestinationConfig**: The `-DestinationConfig` parameter is now shared between the merge and export functionalities, simplifying the user experience.
+
+### Fixed
+- **Current Context Handling**: Fixed an issue where the current context could be removed inadvertently during cleanup. The script now retains the current context unless its associated cluster is removed.
+
 ## [0.0.14] - 2024-10-01
 
 ### Added

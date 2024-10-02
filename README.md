@@ -19,12 +19,15 @@
 - **Force Cleanup Option:** If all clusters are unreachable, KubeTidy can force a cleanup using the `-Force` parameter.
 - **List Clusters Option**: Use the `-ListClusters` parameter to list all clusters in your kubeconfig without performing any cleanup, with a count of total clusters displayed.
 - **Merge Kubeconfig Files**: Easily merge multiple `kubeconfig` files into a single config file using the `-MergeConfigs` parameter.
+- **List Contexts Option**: Use the `-ListContexts` parameter to list all available contexts in your kubeconfig file without making any changes.
+- **Export Contexts Option**: Use the `-ExportContexts` parameter to export specific contexts from the kubeconfig. You can specify the output path using the `-DestinationConfig` parameter.
+- **Preserve Current Context**: The current context is preserved in the cleaned kubeconfig unless it is associated with a removed cluster.
 - **Dry Run Mode**: Use the `-DryRun` parameter to simulate cleanup or merging without actually making any changes to your kubeconfig files.
 - **Verbose Output**: Provides detailed logging about cluster reachability and other operations using the `-Verbose` flag.
 
 ## Requirements
 
-- PowerShell 5.1 or higher.
+- PowerShell 7 or higher.
 - [powershell-yaml](https://www.powershellgallery.com/packages/powershell-yaml) module for YAML parsing.
 
 ## Installation
@@ -57,8 +60,10 @@ Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExclusionList "cluster1,cl
 - **`-Backup`**: Set to `false` if you don't want a backup to be created. Defaults to `true`.
 - **`-Force`**: Forces cleanup even if no clusters are reachable. Use this when you want to proceed with cleanup despite network issues.
 - **`-ListClusters`**: Lists all clusters in the kubeconfig file without performing any cleanup, and displays the total number of clusters.
+- **`-ListContexts`**: Lists all contexts in the kubeconfig file without performing any cleanup.
+- **`-ExportContexts`**: Exports specific contexts from the kubeconfig. You can provide a comma-separated list of contexts to export.
 - **`-MergeConfigs`**: Merges multiple `kubeconfig` files into one. Takes an array of file paths as input.
-- **`-DestinationConfig`**: Path to save the merged `kubeconfig` file. If not specified, the default `"$HOME\.kube\config"` will be used.
+- **`-DestinationConfig`**: Path to save the merged or filtered `kubeconfig` file. If not specified, the default `"$HOME\.kube\config"` will be used.
 - **`-DryRun`**: Simulates the cleanup or merging process without making any changes. Shows what would happen without modifying the `kubeconfig` file.
 - **`-Verbose`**: Enables detailed logging during the cleanup process, including information about cluster reachability, backup creation, and module imports.
 
@@ -117,6 +122,22 @@ To list all clusters without performing any cleanup, along with the count of clu
 Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ListClusters
 ```
 
+#### Listing contexts
+
+To list all contexts without performing any cleanup:
+
+```powershell
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ListContexts
+```
+
+#### Exporting specific contexts
+
+To export specific contexts from the kubeconfig:
+
+```powershell
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -ExportContexts "context1,context2" -DestinationConfig "$HOME\.kube\filtered-config"
+```
+
 #### Verbose logging for detailed output
 
 For detailed logging during the execution:
@@ -150,6 +171,20 @@ Cluster: cluster2
 Cluster: cluster3
 
 Total Clusters: 3
+```
+
+### List Contexts Output Example
+
+When using the `-ListContexts` parameter, you will receive output like this:
+
+```
+Listing all contexts in KubeConfig file:
+
+Context: context1
+Context: context2
+Context: context3
+
+Total Contexts: 3
 ```
 
 ## Output Example

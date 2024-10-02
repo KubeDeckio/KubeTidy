@@ -75,6 +75,8 @@ function Invoke-KubeTidy {
     [bool]$Backup = $true,
     [switch]$Force,
     [switch]$ListClusters,
+    [switch]$ListContexts,
+    [string]$ExportContexts = "",
     [array]$MergeConfigs,
     [string]$DestinationConfig,
     [switch]$DryRun,
@@ -84,16 +86,17 @@ function Invoke-KubeTidy {
 
 # Only show help if the Help switch is passed
     # OR if none of the actual action parameters are provided
-    if ($Help -or (-not $ExclusionList -and -not $ListClusters -and -not $MergeConfigs)) {
-
+    if ($Help -or (-not $ExclusionList -and -not $ListClusters -and -not $ListContexts -and -not $MergeConfigs -and -not $ExportContexts)) {
         Write-Host ""
         Write-Host "Parameters:"
         Write-Host "  -KubeConfigPath      Path to your kubeconfig file."
         Write-Host "  -ExclusionList       Comma-separated list of clusters to exclude from cleanup."
         Write-Host "  -Force               Force cleanup even if no clusters are reachable."
         Write-Host "  -ListClusters        Display a list of all clusters in the kubeconfig file."
+        Write-Host "  -ListContexts        Display a list of all contexts in the kubeconfig file."
+        Write-Host "  -ExportContexts      Comma-separated list of contexts to export from the kubeconfig."
         Write-Host "  -MergeConfigs        Array of kubeconfig files to merge."
-        Write-Host "  -DestinationConfig   Path to save the merged kubeconfig file."
+        Write-Host "  -DestinationConfig   Path to save the merged or exported kubeconfig file."
         Write-Host "  -DryRun              Simulate the cleanup process without making changes."
         Write-Host "  -Help                Display this help message."
         return
@@ -169,21 +172,37 @@ if (-not $KubeConfigPath) {
         }
         return
     }
+
+    if ($ExportContexts) {
+        if (-not $DestinationConfig) {
+            $DestinationConfig = "$HOME/.kube/filtered-config"  # Default destination for export
+        }
+        Show-KubeTidyBanner
+        Write-Host "Exporting specified contexts: `n$ExportContexts`n" -ForegroundColor Yellow
+        Export-KubeContexts -KubeConfigPath $KubeConfigPath -Contexts $ExportContexts -OutputFile $DestinationConfig
+        return
+    }
         
     if ($ListClusters) {
         Show-KubeTidyBanner
         Get-AllClusters -KubeConfigPath $KubeConfigPath
         return
     }
+
+    if ($ListContexts) {
+        Show-KubeTidyBanner
+        Get-KubeContexts -KubeConfigPath $KubeConfigPath
+        return
+    }
         
     Show-KubeTidyBanner
     Write-Host "Starting KubeTidy cleanup..." -ForegroundColor Yellow
     Write-Host ""
-        
+            
     Write-Verbose "Reading KubeConfig from $KubeConfigPath"
     $kubeConfigContent = Get-Content -Raw -Path $KubeConfigPath
     $kubeConfig = $kubeConfigContent | ConvertFrom-Yaml
-        
+    
     # Backup original file before cleanup
     if ($Backup -and -not $DryRun) {
         Write-Verbose "Creating a backup of the KubeConfig file."
@@ -192,12 +211,14 @@ if (-not $KubeConfigPath) {
     elseif ($DryRun) {
         Write-Host "Dry run enabled: Skipping backup of the KubeConfig file." -ForegroundColor Yellow
     }
-        
+    
     $removedClusters = @()
     $checkedClusters = 0
     $reachableClusters = 0
     $totalClusters = $kubeConfig.clusters.Count
-        
+    
+    $currentContext = $kubeConfig.'current-context'  # Store the current context for later check
+    
     foreach ($cluster in $kubeConfig.clusters) {
         $clusterName = $cluster.name
         $clusterServer = $cluster.cluster.server
@@ -220,13 +241,13 @@ if (-not $KubeConfigPath) {
             $reachableClusters++
         }
     }
-        
+    
     if ($reachableClusters -eq 0 -and -not $Force) {
         Write-Host "No clusters are reachable. Perhaps the internet is down? Use `-Force` to proceed with cleanup." -ForegroundColor Yellow
         Write-Verbose "No clusters are reachable. Aborting cleanup unless `-Force` is used."
         return
     }
-        
+    
     if ($removedClusters.Count -gt 0) {
         if ($DryRun) {
             Write-Host "Dry run enabled: The following clusters would be removed: $($removedClusters -join ', ')" -ForegroundColor Yellow
@@ -236,11 +257,20 @@ if (-not $KubeConfigPath) {
             $retainedContexts = $kubeConfig.contexts | Where-Object { $removedClusters -notcontains $_.context.cluster }
             $removedUsers = $kubeConfig.contexts | Where-Object { $removedClusters -contains $_.context.cluster } | ForEach-Object { $_.context.user }
             $retainedUsers = $kubeConfig.users | Where-Object { $removedUsers -notcontains $_.name }
-        
+    
             $kubeConfig.clusters = $retainedClusters
             $kubeConfig.contexts = $retainedContexts
             $kubeConfig.users = $retainedUsers
-        
+    
+            # Check if the current-context belongs to a removed cluster
+            if ($currentContext) {
+                $currentContextCluster = ($kubeConfig.contexts | Where-Object { $_.name -eq $currentContext }).context.cluster
+                if ($removedClusters -contains $currentContextCluster) {
+                    Write-Verbose "The current context ($currentContext) belongs to a removed cluster. Unsetting current-context."
+                    $kubeConfig.'current-context' = $null  # Unset the current context
+                }
+            }
+    
             Write-Host "Removed clusters, users, and contexts related to unreachable clusters." -ForegroundColor Green
             Write-Verbose "Removed the following clusters: $($removedClusters -join ', ')"
         }
@@ -249,29 +279,29 @@ if (-not $KubeConfigPath) {
         Write-Host "No clusters were removed." -ForegroundColor Yellow
         Write-Verbose "No clusters were marked for removal."
     }
-        
+    
     # Manually build the YAML for clusters, contexts, and users
-    $clustersYaml = @"
+$clustersYaml = @"
 clusters: `n
 "@
-    foreach ($cluster in $kubeConfig.clusters) {
-        $clustersYaml += "  - cluster:`n"
-        $clustersYaml += "      certificate-authority-data: $($cluster.cluster.'certificate-authority-data')`n"
-        $clustersYaml += "      server: $($cluster.cluster.server)`n"
-        $clustersYaml += "    name: $($cluster.name)`n"
-    }
+foreach ($cluster in $kubeConfig.clusters) {
+    $clustersYaml += "  - cluster:`n"
+    $clustersYaml += "      certificate-authority-data: $($cluster.cluster.'certificate-authority-data')`n"
+    $clustersYaml += "      server: $($cluster.cluster.server)`n"
+    $clustersYaml += "    name: $($cluster.name)`n"
+}
 
-    $contextsYaml = @"
+$contextsYaml = @"
 contexts: `n
 "@
-    foreach ($context in $kubeConfig.contexts) {
-        $contextsYaml += "  - context:`n"
-        $contextsYaml += "      cluster: $($context.context.cluster)`n"
-        $contextsYaml += "      user: $($context.context.user)`n"
-        $contextsYaml += "    name: $($context.name)`n"
-    }
+foreach ($context in $kubeConfig.contexts) {
+    $contextsYaml += "  - context:`n"
+    $contextsYaml += "      cluster: $($context.context.cluster)`n"
+    $contextsYaml += "      user: $($context.context.user)`n"
+    $contextsYaml += "    name: $($context.name)`n"
+}
 
-    $usersYaml = @"
+$usersYaml = @"
 users: `n
 "@
     foreach ($user in $kubeConfig.users) {
@@ -280,12 +310,18 @@ users: `n
         $usersYaml += "      client-certificate-data: $($user.user.'client-certificate-data')`n"
         $usersYaml += "      client-key-data: $($user.user.'client-key-data')`n"
     }
-
-    $kubeConfigHeader = @"
+    
+    # Add the current context if it still exists after cleanup
+    $currentContextYaml = ""
+    if ($kubeConfig.'current-context') {
+        $currentContextYaml = "current-context: $($kubeConfig.'current-context')`n"
+    }
+    
+$kubeConfigHeader = @"
 apiVersion: v1
 kind: Config
 preferences: {} `n
-"@
+"@ + $currentContextYaml
 
     if (-not $DryRun) {
         $fullKubeConfigYaml = $kubeConfigHeader + $clustersYaml + $contextsYaml + $usersYaml
@@ -295,12 +331,12 @@ preferences: {} `n
     else {
         Write-Host "Dry run enabled: Changes to the KubeConfig file were NOT saved." -ForegroundColor Yellow
     }
-
+    
     $removedCount = $removedClusters.Count
     $checkedClustersText = "{0,5}" -f $checkedClusters
     $removedCountText = "{0,5}" -f $removedCount
     $retainedCountText = "{0,5}" -f ($checkedClusters - $removedCount)
-
+    
     Write-Host ""
     Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Magenta
     Write-Host "║               KubeTidy Summary                 ║" -ForegroundColor Magenta

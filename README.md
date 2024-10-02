@@ -227,6 +227,7 @@ Cluster: cluster3
 Total Clusters: 3
 ```
 
+
 #### List Contexts Output Example
 
 When using the `-ListContexts` parameter, you will receive output like this:
@@ -241,7 +242,7 @@ Context: context3
 Total Contexts: 3
 ```
 
-## Output Example
+#### Output Example
 
 After execution, you will receive a summary like the following:
 

@@ -1,9 +1,9 @@
 name: Publish Plugin to Krew
 
 on:
-  push:  
+  push: 
     tags:
-      - 'v*'       
+      - 'v*'
   release:
     types:
       - published

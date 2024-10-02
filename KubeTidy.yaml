@@ -1,7 +1,7 @@
 apiVersion: krew.googlecontainertools.github.com/v1alpha2
 kind: Plugin
 metadata:
-  name: KubeTidy
+  name: kubetidy
 spec:
   version: "v0.0.14"
   Homepage: https://kubetidy.io" 
@@ -11,14 +11,14 @@ spec:
         os: darwin
         arch: amd64
     uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.14/KubeTidy-darwin-amd64-v0.0.14.tar.gz
-    sha256: "4d7e8def051838db44ab31b4dca2d707b78250b7351767923b299950d6229bc6"
+    sha256: "d198611b92865943694322037b2a6c508babf82035ec31e4019396f8452afaf3"
     bin: kubectl-KubeTidy
   - selector:
       matchLabels:
         os: linux
         arch: amd64
     uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.14/KubeTidy-linux-amd64-v0.0.14.tar.gz
-    sha256: "dd328a9c80a0e2eddb0d89a675839e862794c80670ba7b5e5cc09705cf576fec"
+    sha256: "d198611b92865943694322037b2a6c508babf82035ec31e4019396f8452afaf3"
     bin: kubectl-KubeTidy
   shortDescription: "A tool to clean up your Kubernetes config."
   description: |

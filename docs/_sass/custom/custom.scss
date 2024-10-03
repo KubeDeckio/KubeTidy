@@ -1,0 +1,19 @@
+a:not([class]) {
+    text-decoration: underline;
+    text-decoration-color: #11a9bb;
+    text-underline-offset: 2px;
+}
+
+a {
+    color: #11a9bb;
+    text-decoration: none;
+}
+
+.nav-list .nav-list-item .nav-list-expander {
+    position: absolute;
+    right: 0;
+    width: 3rem;
+    height: 3rem;
+    padding: 0.75rem;
+    color: #11a9bb;
+}

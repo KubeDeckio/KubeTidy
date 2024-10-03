@@ -21,9 +21,6 @@ enable_copy_code_button: true
 # Enable or disable heading anchors
 heading_anchors: true
 
-# enable this to place buttons in the footer to toggle between light and dark mode
-enable_color_scheme_toggle: true
-
 # Makes Aux links open in a new tab. Default is false
 aux_links_new_tab: true
 

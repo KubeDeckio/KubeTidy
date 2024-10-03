@@ -55,4 +55,4 @@ The Dry Run Mode also works for merging multiple kubeconfig files. This allows y
 Invoke-KubeTidy -MergeConfigs "config1.yaml","config2.yaml" -DestinationConfig "$HOME\\.kube\\config" -DryRun
 ```
 
-For detailed logging examples, check out our [Logging and Output](./logging-output) page.
+For detailed logging examples, check out our [Logging and Output](../logging-output) page.

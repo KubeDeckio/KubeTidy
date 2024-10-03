@@ -1,9 +1,10 @@
 ---
 title: Home
+nav_order: 1
 layout: home
 ---
 
-<div style="color: cyan; font-family: monospace; font-size: 18px; line-height: 1.2; white-space: pre; text-align: center;">
+<div style="color: #041a28; font-family: monospace; font-size: 18px; line-height: 1.2; white-space: pre;">
 ██╗  ██╗██╗   ██╗██████╗ ███████╗████████╗██╗██████╗ ██╗   ██╗<br>
 ██║ ██╔╝██║   ██║██╔══██╗██╔════╝╚══██╔══╝██║██╔══██╗╚██╗ ██╔╝<br>
 █████╔╝ ██║   ██║██████╔╝█████╗     ██║   ██║██║  ██║ ╚████╔╝ <br>

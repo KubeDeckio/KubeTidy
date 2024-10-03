@@ -14,11 +14,15 @@ KubeTidy is a PowerShell tool that simplifies managing your Kubernetes `kubeconf
 
 ## Key Features
 
-- **Cluster Reachability Check**: Remove clusters that are unreachable.
-- **User and Context Cleanup**: Clean up users and contexts that are no longer needed.
-- **Backup Creation**: Create backups of your original `kubeconfig` before making changes.
+- **Cluster Reachability Check**: Automatically removes unreachable clusters and their associated users and contexts.
+- **Exclusion List**: Keep specific clusters even if they are temporarily unreachable.
 - **Merge Kubeconfig Files**: Combine multiple `kubeconfig` files into one.
-- **Dry Run Mode**: Simulate cleanup or merging before making actual changes.
+- **Backup & Summary**: Automatically back up your original `kubeconfig` and get a summary of the changes made.
+- **Force Cleanup**: Remove all clusters, even if unreachable, with the `-Force` parameter.
+- **List & Export Options**: List or export clusters and contexts without making changes.
+- **Dry Run Mode**: Simulate cleanup or merging operations to preview the results.
+- **Verbose Logging**: Get detailed logs for all operations using the `-Verbose` flag.
+
 
 Check out our [Installation Guide](docs/installation) to get started or [Usage Documentation](docs/usage) to explore how you can use KubeTidy.
 

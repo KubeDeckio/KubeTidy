@@ -2,40 +2,27 @@
 
 <script>
     const btnToggle = document.querySelector('.js-toggle-dark-mode');
-    const logoImage = document.getElementById('site-logo'); // Get the image element
-    const siteLogoImage = document.getElementById('site-logo'); // Site logo (e.g., header)
 
-    function setLogoBasedOnTheme(theme) {
-        if (theme === 'dark') {
-            logoImage.src = '/assets/images/KubeTidyDark.png'; // Set dark mode image
-            siteLogoImage.src = '/assets/images/KubeTidyDark.png'; // Dark mode site logo
-            btnToggle.textContent = '☼ light';
-        } else {
-            logoImage.src = '/assets/images/KubeTidy.png'; // Set light mode image
-            siteLogoImage.src = '/assets/images/KubeTidy.png'; // Light mode site logo
-            btnToggle.textContent = '☾ dark';
-        }
-    }
-
-    // Initial load, set the theme and image
     if (localStorage.getItem('theme') === 'dark') {
         jtd.setTheme('dark');
-        setLogoBasedOnTheme('dark');
+        btnToggle.textContent = '☼ light';
     } else {
         jtd.setTheme('light');
-        setLogoBasedOnTheme('light');
+        btnToggle.textContent = '☾ dark';
     }
+</script>
 
+<script>
     const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
     jtd.addEvent(toggleDarkMode, 'click', function () {
         if (jtd.getTheme() === 'dark') {
             jtd.setTheme('light');
-            setLogoBasedOnTheme('light');
+            toggleDarkMode.textContent = '☾ dark';
             localStorage.setItem('theme', 'light');
         } else {
             jtd.setTheme('dark');
-            setLogoBasedOnTheme('dark');
+            toggleDarkMode.textContent = '☼ light';
             localStorage.setItem('theme', 'dark');
         }
     });

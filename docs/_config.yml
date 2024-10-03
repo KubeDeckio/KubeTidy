@@ -18,6 +18,10 @@ logo: "/assets/images/KubeTidy.png"
 # For copy button on code
 enable_copy_code_button: true
 
+assets:
+  stylesheets:
+    - /assets/css/custom.css
+
 # Enable or disable heading anchors
 heading_anchors: true
 

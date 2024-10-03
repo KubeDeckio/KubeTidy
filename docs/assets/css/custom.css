@@ -1,0 +1,16 @@
+/* Default (light mode) */
+.logo {
+    content: url('/assets/images/KubeTidy.png');
+  }
+  
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    #logo {
+      content: url('/assets/images/KubeTidyDark.png');
+    }
+    
+    #site-logo {
+      content: url('/assets/images/KubeTidyDark.png');
+    }
+  }
+  

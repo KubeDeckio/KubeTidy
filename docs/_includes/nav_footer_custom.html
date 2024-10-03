@@ -1,4 +1,4 @@
-<button class="btn js-toggle-dark-mode" id="toggle-dark-mode" style="position: fixed; bottom: 20px; left: 20px; padding: 10px; transition: opacity 0.3s ease;">☾ dark</button>
+<button class="btn js-toggle-dark-mode" id="toggle-dark-mode" style="position: fixed; bottom: 20px; left: 200px; padding: 10px; transition: opacity 0.3s ease;">☾ dark</button>
 
 <script>
     const btnToggle = document.querySelector('.js-toggle-dark-mode');
@@ -27,18 +27,36 @@
 
     // Scroll detection to hide and show the button
     let scrollTimeout;
+
+    // Detect if user is on mobile
+    function isMobile() {
+        return window.innerWidth <= 768; // You can adjust this breakpoint
+    }
+
     window.addEventListener('scroll', function () {
         const button = document.getElementById('toggle-dark-mode');
-        
-        // Hide the button when scrolling
-        button.style.opacity = '0';
-        
-        // Clear the previous timeout if it exists
-        clearTimeout(scrollTimeout);
-        
-        // Show the button again after 500ms when scrolling stops
-        scrollTimeout = setTimeout(function () {
-            button.style.opacity = '1';
-        }, 500);
+
+        // Hide the button only on mobile or always if desired
+        if (isMobile()) {
+            button.style.opacity = '0';
+            
+            // Clear the previous timeout if it exists
+            clearTimeout(scrollTimeout);
+            
+            // Show the button again after 500ms when scrolling stops
+            scrollTimeout = setTimeout(function () {
+                button.style.opacity = '1';
+            }, 500);
+        }
     });
+
 </script>
+
+<style>
+    /* Media query for mobile-specific styles */
+    @media (max-width: 768px) {
+        #toggle-dark-mode {
+            left: 20px; /* Adjust alignment on mobile to fit properly */
+        }
+    }
+</style>

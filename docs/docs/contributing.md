@@ -92,7 +92,7 @@ All contributions will be reviewed by maintainers. Please be patient, as it may 
 
 ## Code of Conduct
 
-Please follow our [Code of Conduct](../../CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment for all contributors.
+Please follow our [Code of Conduct](https://github.com/PixelRobots/KubeTidy/blob/main/CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment for all contributors.
 
 ## Thank You!
 

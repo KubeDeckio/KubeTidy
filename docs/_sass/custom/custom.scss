@@ -36,3 +36,26 @@ a {
 .btn:hover, .btn.zeroclipboard-is-hover {
     color: #11a9bb;
 }
+
+/* Base button style */
+button.js-toggle-dark-mode {
+    padding: 10px;
+    border: none;
+    background-color: transparent; /* No background */
+    color: #11a9bb; /* Initial text color */
+    cursor: pointer;
+    transition: all 0.3s ease; /* Smooth transition */
+  }
+  
+  /* Focus (when clicked or focused with keyboard) */
+  button.js-toggle-dark-mode:focus {
+    outline: 2px solid #11a9bb; /* Outline color on click/focus */
+    background-color: rgba(17, 169, 187, 0.1); /* Slightly tinted background */
+  }
+  
+  /* Active (when actively being clicked) */
+  button.js-toggle-dark-mode:active {
+    outline: 2px solid #007b9a; /* Darker outline when actively clicked */
+    background-color: rgba(17, 169, 187, 0.3); /* Darker background when clicked */
+    color: #007b9a; /* Darker text when clicked */
+  }

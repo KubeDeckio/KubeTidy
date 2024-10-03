@@ -4,7 +4,7 @@
     const btnToggle = document.querySelector('.js-toggle-dark-mode');
 
     if (localStorage.getItem('theme') === 'dark') {
-        jtd.setTheme('dark');
+        jtd.setTheme('kubetidydark');
         btnToggle.textContent = '☼ light';
     } else {
         jtd.setTheme('light');
@@ -21,9 +21,9 @@
             toggleDarkMode.textContent = '☾ dark';
             localStorage.setItem('theme', 'light');
         } else {
-            jtd.setTheme('dark');
+            jtd.setTheme('kubetidydark');
             toggleDarkMode.textContent = '☼ light';
-            localStorage.setItem('theme', 'dark');
+            localStorage.setItem('theme', 'kubetidydark');
         }
     });
 </script>

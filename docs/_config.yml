@@ -5,7 +5,7 @@ theme: just-the-docs
 url: https://docs.kubetidy.io
 
 aux_links:
-  Template Repository: https://github.com/pixelrobots/kubetidy
+  View Project in GitHub: https://github.com/pixelrobots/kubetidy
 
 # Color scheme supports "light" (default) and "dark"
 color_scheme: light

@@ -5,7 +5,7 @@ layout: home
 ---
 
 <p align="center">
-<img src="assets/images/KubeTidy.png" />
+<img id="logo" src="assets/images/KubeTidy.png" />
 </p>
 
 Welcome to **KubeTidy**! 

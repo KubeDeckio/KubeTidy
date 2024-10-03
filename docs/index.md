@@ -20,10 +20,10 @@ KubeTidy is a PowerShell tool that simplifies managing your Kubernetes `kubeconf
 - **Merge Kubeconfig Files**: Combine multiple `kubeconfig` files into one.
 - **Dry Run Mode**: Simulate cleanup or merging before making actual changes.
 
-Check out our [Installation Guide](docs/installation.md) to get started or [Usage Documentation](docs/usage.md) to explore how you can use KubeTidy.
+Check out our [Installation Guide](docs/installation) to get started or [Usage Documentation](docs/usage) to explore how you can use KubeTidy.
 
 ---
 
-- [Installation](docs/installation.md)
-- [Usage](docs/usage.md)
+- [Installation](docs/installation)
+- [Usage](docs/usage)
 - [GitHub Repository](https://github.com/PixelRobots/KubeTidy)

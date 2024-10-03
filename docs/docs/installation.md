@@ -40,4 +40,4 @@ kubectl krew install --manifest="./KubeTidy.yaml"
 - **PowerShell Version**: PowerShell 7 or higher is required.
 - **Additional Dependencies**: The `powershell-yaml` module is needed for YAML parsing. It will be automatically installed when running KubeTidy from PowerShell.
 
-Now that you've installed KubeTidy, head over to the [Usage Guide](docs/usage.md) to start cleaning up your Kubernetes configurations!
+Now that you've installed KubeTidy, head over to the [Usage Guide](docs/usage) to start cleaning up your Kubernetes configurations!

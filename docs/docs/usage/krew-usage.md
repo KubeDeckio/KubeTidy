@@ -56,4 +56,4 @@ kubectl kubetidy -mergeconfigs "config1.yaml" "config2.yaml" -destinationconfig 
 ```
 
 
-For detailed logging examples, check out our [Logging and Output](docs/logging-output) page.
+For detailed logging examples, check out our [Logging and Output](logging-output) page.

@@ -41,4 +41,4 @@ After running KubeTidy, a summary is displayed showing how many clusters were ch
 ╚════════════════════════════════════════════════╝
 ```
 
-![KubeTidy Cleanup Summary](../../assets/images/summary.png)
+![KubeTidy Cleanup Summary](../../../assets/images/summary.png)

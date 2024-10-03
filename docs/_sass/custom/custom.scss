@@ -1,0 +1,20 @@
+/* Light mode - Default theme */
+a:link, a:visited {
+    color: #11a9bb; /* Light mode hyperlink color */
+  }
+  
+  a:hover, a:focus {
+    color: #11a9bb; /* Light mode hover/focus color */
+  }
+  
+  /* Dark mode */
+  @media (prefers-color-scheme: dark) {
+    a:link, a:visited {
+      color: #11a9bb; /* Dark mode hyperlink color */
+    }
+  
+    a:hover, a:focus {
+      color: #11a9bb; /* Dark mode hover/focus color */
+    }
+  }
+  

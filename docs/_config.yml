@@ -36,6 +36,7 @@ nav_sort: case_sensitive # Capital letters sorted before lowercase
 nav_external_links:
   - title: Pixel Robots
     url: https://pixelrobots.co.uk
+    opens_in_new_tab: true
 
 # Show navigation error report
 nav_error_report: true # default is false/nil.

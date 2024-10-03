@@ -3,11 +3,12 @@
 <script>
     const btnToggle = document.querySelector('.js-toggle-dark-mode');
 
-    if (localStorage.getItem('theme') === 'dark') {
-        jtd.setTheme('kubetidydark');
+    // Check for the saved theme in localStorage
+    if (localStorage.getItem('theme') === 'kubetidydark') {
+        jtd.setTheme('kubetidydark'); // Apply custom kubetidydark theme
         btnToggle.textContent = '☼ light';
     } else {
-        jtd.setTheme('light');
+        jtd.setTheme('light'); // Apply light theme
         btnToggle.textContent = '☾ dark';
     }
 </script>
@@ -16,14 +17,14 @@
     const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
 
     jtd.addEvent(toggleDarkMode, 'click', function () {
-        if (jtd.getTheme() === 'dark') {
+        if (jtd.getTheme() === 'kubetidydark') {
             jtd.setTheme('light');
             toggleDarkMode.textContent = '☾ dark';
-            localStorage.setItem('theme', 'light');
+            localStorage.setItem('theme', 'light'); // Save light theme in localStorage
         } else {
             jtd.setTheme('kubetidydark');
             toggleDarkMode.textContent = '☼ light';
-            localStorage.setItem('theme', 'kubetidydark');
+            localStorage.setItem('theme', 'kubetidydark'); // Save kubetidydark theme in localStorage
         }
     });
 </script>

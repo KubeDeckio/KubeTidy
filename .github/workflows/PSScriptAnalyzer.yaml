@@ -4,49 +4,20 @@ on:
   pull_request:
   workflow_dispatch:
 
+
 jobs:
-  PSScriptAnalyzer:
-    runs-on: ubuntu-latest
+  analyze:
+    runs-on: windows-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v3
 
-      - name: Run PSScriptAnalyzer on PowerShell Scripts
-        shell: pwsh
+      - name: Run PSScriptAnalyzer
         run: |
-          # Get all PSScript Analyzer Rules and save them in an array
-          $scriptAnalyzerRules = Get-ScriptAnalyzerRule
-          $Rules = @()
-          $scriptAnalyzerRules | ForEach-Object { $Rules += @{ "RuleName" = $_.RuleName; "Severity" = $_.Severity } }
-          
-          # Create an array of the types of rules
-          $Severities = @("Error")
-          
-          # Initialize a report variable
-          $report = ""
+          # Run ScriptAnalyzer and redirect output to a file
+          Invoke-ScriptAnalyzer -Path . | Out-File -FilePath scriptAnalyzerOutput.txt
 
-          foreach ($Severity in $Severities) { 
-              Describe "Testing PSSA $Severity Rules" -Tag $Severity {
-
-                  It "<RuleName>" -TestCases ($Rules | Where-Object Severity -eq $Severity) {
-                      param ($RuleName)
-
-                      # Collect analysis results
-                      $analysisResults = Invoke-ScriptAnalyzer -Path ./ -IncludeRule $RuleName -Recurse
-                      $analysisResults | ForEach-Object { 
-                          $output = "Problem in $($_.ScriptName) at line $($_.Line) with message: $($_.Message)"
-                          $report += "`n$output"
-                          # Print to GitHub Actions log
-                          Write-Host $output
-                      }
-                  }
-              }
-          }
-
-          # Write the summary output to the GitHub Actions Summary tab
-          $summaryPath = $env:GITHUB_STEP_SUMMARY
-          if ($report) {
-              "### PSScriptAnalyzer Report `n" + $report | Out-File -FilePath $summaryPath -Append
-          } else {
-              "### PSScriptAnalyzer Report `nNo issues found." | Out-File -FilePath $summaryPath -Append
-          }
+          # Append the results to the GitHub Actions summary page
+          $output = Get-Content -Path scriptAnalyzerOutput.txt
+          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $output
+        shell: pwsh

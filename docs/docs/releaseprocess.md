@@ -57,6 +57,27 @@ We use several GitHub Actions workflows to automate the release process. You can
 
 4. **Netlify PR Previews**: Netlify automatically builds and deploys documentation previews for pull requests affecting the `docs/` folder.
 
+5. **[Run PSScriptAnalyzer on Pull Requests](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/PSScriptAnalyzer.yaml)**: This workflow triggers **PSScriptAnalyzer** on every pull request to the `main` branch. It scans PowerShell scripts for code quality, ensuring no warnings or errors are present before merging changes. The results are displayed directly in the GitHub Actions summary as formatted Markdown tables.
+
+## Code Quality and Linting
+
+As part of our commitment to code quality, we run **PSScriptAnalyzer** to scan all PowerShell scripts for any warnings or errors before publishing a new release. This ensures the code meets the required standards before it is made available to the PowerShell Gallery and Krew.
+
+### Automated Code Analysis with PSScriptAnalyzer
+
+We have a GitHub Action in place that triggers **PSScriptAnalyzer** whenever a pull request is opened or updated against the `main` branch. This action performs the following tasks:
+
+- Scans all PowerShell scripts within the repository.
+- Checks for potential issues such as rule violations, warnings, and errors.
+- Formats the results into Markdown tables, which are appended to the GitHub Actions summary for easy review.
+- Fails the build if any errors are detected, preventing the release from proceeding with faulty code.
+
+### How It Integrates with the Release Process
+
+This action is a crucial part of our release process and runs alongside the existing workflows that publish the module to the PowerShell Gallery and Krew. Specifically, the **PSScriptAnalyzer** check ensures that any release tagged for publication meets code quality standards before it is pushed out.
+
+By incorporating this analysis step, we safeguard the code from potential issues and maintain high standards for every release. The release process will not continue until the PSScriptAnalyzer successfully passes, ensuring that only compliant code is published.
+
 ## Summary
 
 These workflows automate the release process and manage releases across multiple platforms. With Netlify PR previews, contributors and reviewers can verify how documentation updates will appear on the website before they are merged into the `main` branch.

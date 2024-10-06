@@ -1,0 +1,14 @@
+name: Run PSPSScriptAnalyzer on PowerShell Scripts
+
+on:
+  pull_request:
+
+jobs:
+  PSScriptAnalyzer:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Run PSScriptAnalyzer
+        uses: microsoft/psscriptanalyzer-action@v1.1

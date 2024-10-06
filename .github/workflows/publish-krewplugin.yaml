@@ -63,6 +63,10 @@ jobs:
               Write-Host "No parameter block found to remove."
           }
 
+      # Validate PowerShell Code
+      - name: Run PSScriptAnalyzer
+        uses: microsoft/psscriptanalyzer-action@v1.1
+
       # Convert line endings from Windows (CRLF) to Unix (LF)
       - name: Convert Line Endings
         shell: pwsh  # Use PowerShell

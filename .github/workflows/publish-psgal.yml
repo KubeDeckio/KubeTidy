@@ -18,6 +18,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      # Validate PowerShell Code
+      - name: Run PSScriptAnalyzer
+        uses: microsoft/psscriptanalyzer-action@v1.1
+
       # Validate the module (ensure it loads correctly)
       - name: Validate PowerShell Module
         run: |

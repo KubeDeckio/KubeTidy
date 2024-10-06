@@ -59,20 +59,3 @@ button.js-toggle-dark-mode {
     background-color: rgba(17, 169, 187, 0.3); /* Darker background when clicked */
     color: #007b9a; /* Darker text when clicked */
   }
-
-/* Default for desktop */
-.btn.js-toggle-dark-mode {
-    position: fixed;
-    bottom: 20px;
-    left: 15%;
-    padding: 10px;
-    color: #11a9bb;
-}
-
-/* For mobile devices */
-@media (max-width: 768px) {
-    .btn.js-toggle-dark-mode {
-        bottom: 10px;
-        left: 5%;
-    }
-}

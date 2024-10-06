@@ -31,15 +31,20 @@ jobs:
         with:
           ruby-version: '3.3'
           bundler-cache: true
-          cache-version: 0 # Increment this number if you need to re-download cached gems
           working-directory: '${{ github.workspace }}/docs'
 
       - name: Build static site
-        run: bundle exec jekyll build --baseurl ${{ env.BASEURL }} 
+        run: bundle exec jekyll build --baseurl ${{ env.BASEURL }}
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.BASEURL }}
+
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1
         with:
           source-dir: ./docs/
           preview-branch: main
-          umbrella-dir: pr-preview
+          umbrella-dir: docs/pr-preview

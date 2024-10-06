@@ -37,6 +37,14 @@ The GitHub Pages action is triggered when:
 - A commit is pushed to the `main` branch that affects files in the `docs/` folder.
 - The workflow is manually triggered through GitHub's Actions tab.
 
+## Netlify PR Previews for Documentation
+When a pull request that affects the `docs/` folder is opened or updated, Netlify automatically deploys a preview of the updated website. This allows you to review the documentation changes in a live environment before merging the pull request.
+
+### Reviewing Documentation with Netlify Previews
+For each pull request, a unique preview URL will be posted as a comment. Before merging, reviewers should check this preview to ensure the documentation appears as expected.
+
+Make sure to always review the Netlify preview to confirm that the changes render correctly on the website.
+
 ## GitHub Actions Workflows
 
 We use several GitHub Actions workflows to automate the release process. You can view the full details of these workflows directly in the repository:
@@ -46,6 +54,8 @@ We use several GitHub Actions workflows to automate the release process. You can
 2. **[Publish Plugin to Krew](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/publish-krewplugin.yaml)**: This action packages and publishes the KubeTidy plugin for Linux and macOS, and uploads it to GitHub as release assets.
 
 3. **[Deploy Jekyll Site to Pages](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/deploy-docs.yml)**: This action builds and deploys the documentation site to GitHub Pages when changes are pushed to the `docs/` folder.
+
+4. **Netlify PR Previews**: Netlify automatically builds and deploys documentation previews for pull requests affecting the `docs/` folder.
 
 ## Summary
 

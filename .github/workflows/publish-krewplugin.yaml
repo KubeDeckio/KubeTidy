@@ -64,8 +64,10 @@ jobs:
           }
 
       # Validate PowerShell Code
-      - name: Run PSScriptAnalyzer
-        uses: microsoft/psscriptanalyzer-action@v1.1
+      - name: Run PSScriptAnalyzer on PowerShell Scripts
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity Error -EnableExit
 
       # Convert line endings from Windows (CRLF) to Unix (LF)
       - name: Convert Line Endings

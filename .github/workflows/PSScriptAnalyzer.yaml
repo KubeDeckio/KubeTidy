@@ -6,17 +6,12 @@ on:
 
 jobs:
   PSScriptAnalyzer:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      # Validate PowerShell Code
-      - name: Run PSScriptAnalyzer
-        uses: microsoft/psscriptanalyzer-action@v1.1
-        with:
-            path: ./
-            includeDefaultRules: true
-            severity: '"Error", "Warning"'
-            recurse: true
-            enableExit: true
+      - name: Run PSScriptAnalyzer on PowerShell Scripts
+        shell: pwsh
+        run: |
+          Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity Error -EnableExit

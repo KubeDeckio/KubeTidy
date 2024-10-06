@@ -59,3 +59,14 @@ button.js-toggle-dark-mode {
     background-color: rgba(17, 169, 187, 0.3); /* Darker background when clicked */
     color: #007b9a; /* Darker text when clicked */
   }
+
+  .js-toggle-dark-mode {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px; /* Adjust font size */
+    padding: 5px 10px; /* Reduce padding */
+    margin-left: 15px; /* Space between button and other elements */
+    color: #11a9bb;
+    vertical-align: middle; /* Align button with text */
+}

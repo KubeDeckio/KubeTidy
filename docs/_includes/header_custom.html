@@ -2,8 +2,10 @@
 <button class="btn js-toggle-dark-mode" style="color: #11a9bb; padding: 5px; margin-left: 15px;">☾ dark</button>
 
 <script>
+document.addEventListener("DOMContentLoaded", function() {
     const btnToggle = document.querySelector('.js-toggle-dark-mode');
 
+    // Set initial theme based on localStorage
     if (localStorage.getItem('theme') === 'dark') {
         jtd.setTheme('dark');
         btnToggle.textContent = '☼ light';
@@ -11,20 +13,18 @@
         jtd.setTheme('light');
         btnToggle.textContent = '☾ dark';
     }
-</script>
 
-<script>
-    const toggleDarkMode = document.querySelector('.js-toggle-dark-mode');
-
-    jtd.addEvent(toggleDarkMode, 'click', function () {
+    // Add click event listener for toggling theme
+    btnToggle.addEventListener('click', function () {
         if (jtd.getTheme() === 'dark') {
             jtd.setTheme('light');
-            toggleDarkMode.textContent = '☾ dark';
+            btnToggle.textContent = '☾ dark';
             localStorage.setItem('theme', 'light');
         } else {
             jtd.setTheme('dark');
-            toggleDarkMode.textContent = '☼ light';
+            btnToggle.textContent = '☼ light';
             localStorage.setItem('theme', 'dark');
         }
     });
+});
 </script>

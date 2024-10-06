@@ -59,6 +59,6 @@ We use several GitHub Actions workflows to automate the release process. You can
 
 ## Summary
 
-These actions automate the release process and make it easy to manage releases across multiple platforms.
+These workflows automate the release process and manage releases across multiple platforms. With Netlify PR previews, contributors and reviewers can verify how documentation updates will appear on the website before they are merged into the `main` branch.
 
 For more details, please refer to the [workflows folder](https://github.com/PixelRobots/KubeTidy/tree/main/.github/workflows) in the repository.

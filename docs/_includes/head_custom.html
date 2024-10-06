@@ -1,0 +1,27 @@
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const headerBtnToggle = document.querySelector('.js-toggle-dark-mode-header');
+    
+        function updateTheme(theme) {
+            if (headerBtnToggle) {
+                headerBtnToggle.textContent = theme === 'dark' ? '☼ light' : '☾ dark';
+            }
+        }
+    
+        // Set initial theme based on localStorage
+        const currentTheme = localStorage.getItem('theme') === 'dark' ? 'dark' : 'light';
+        jtd.setTheme(currentTheme);
+        updateTheme(currentTheme);
+    
+        // Add click event listener for toggling theme
+        if (headerBtnToggle) {
+            headerBtnToggle.addEventListener('click', function() {
+                const newTheme = jtd.getTheme() === 'dark' ? 'light' : 'dark';
+                jtd.setTheme(newTheme);
+                updateTheme(newTheme);
+                localStorage.setItem('theme', newTheme);
+            });
+        }
+    });
+    </script>
+    

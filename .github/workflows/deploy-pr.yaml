@@ -35,7 +35,13 @@ jobs:
           working-directory: '${{ github.workspace }}/docs'
 
       - name: Build static site
-        run: bundle exec jekyll build --baseurl ${{ env.BASEURL }} 
+        run: bundle exec jekyll build --baseurl ${{ env.BASEURL }}
+      - name: Upload artifact
+        # Automatically uploads an artifact from the './_site' directory by default
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ${{ env.BASEURL }}
+
 
       - name: Deploy preview
         uses: rossjrw/pr-preview-action@v1

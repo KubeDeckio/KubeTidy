@@ -1,0 +1,12 @@
+<nav class="navbar">
+    <ul>
+      {{ site.nav_external_links | join: '' | markdownify }}
+      {{ site.aux_links | join: '' | markdownify }}
+      
+      <!-- Insert the dark mode button here -->
+      <li>
+        <button class="btn js-toggle-dark-mode" style="color: #11a9bb; padding: 5px;">☾ dark</button>
+      </li>
+    </ul>
+  </nav>
+  

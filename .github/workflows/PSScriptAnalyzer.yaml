@@ -13,31 +13,38 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run PSScriptAnalyzer and handle warnings/errors
+      - name: Run PSScriptAnalyzer and format output in Markdown
         run: |
           # Run ScriptAnalyzer and capture the output
-          $results = Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity "Warning"
+          $results = Invoke-ScriptAnalyzer -Path .
 
           # Separate the warnings and errors
           $warnings = $results | Where-Object { $_.Severity -eq 'Warning' }
           $errors = $results | Where-Object { $_.Severity -eq 'Error' }
 
-          # Output warnings and errors to separate files
-          $warnings | Format-Table -AutoSize | Out-File -FilePath warnings.txt
-          $errors | Format-Table -AutoSize | Out-File -FilePath errors.txt
+          # Create Markdown formatted tables
+          function ConvertTo-MarkdownTable {
+              param ($items)
+              $header = "| RuleName | Severity | ScriptName | Line | Message |"
+              $separator = "| --- | --- | --- | --- | --- |"
+              $table = foreach ($item in $items) {
+                  "| $($item.RuleName) | $($item.Severity) | $($item.ScriptName) | $($item.Line) | $($item.Message) |"
+              }
+              return "$header`n$separator`n$table"
+          }
 
           # Append warnings to the GitHub Actions summary (if any)
           if ($warnings) {
-              $warningOutput = Get-Content -Path warnings.txt
+              $warningTable = ConvertTo-MarkdownTable -items $warnings
               Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### PSScriptAnalyzer Warnings`n"
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $warningOutput
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "$warningTable`n"
           }
 
           # Append errors to the GitHub Actions summary (if any)
           if ($errors) {
-              $errorOutput = Get-Content -Path errors.txt
+              $errorTable = ConvertTo-MarkdownTable -items $errors
               Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### PSScriptAnalyzer Errors`n"
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $errorOutput
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "$errorTable`n"
           }
 
           # Fail the job if there are any errors

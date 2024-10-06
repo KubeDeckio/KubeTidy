@@ -18,4 +18,5 @@ You can dive right in by exploring the following sections:
 2. [Usage](/docs/usage): Step-by-step instructions for tidying your Kubernetes manifests.
 3. [Contributing](/docs/contributing): Want to contribute? Check out our guidelines for developers and contributors.
 
+Thank you for taking a look at this project.
 Stay tuned for more updates and enhancements as the project evolves!

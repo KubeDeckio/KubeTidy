@@ -16,42 +16,42 @@ jobs:
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
 
-      - name: Run PSScriptAnalyzer and fail on rule violations
+      - name: Run PSScriptAnalyzer and output to summary
         shell: pwsh
         run: |
-          # Create an empty string to accumulate summary output
+          # Initialize an empty string for summary output and a flag for error detection
           $summaryOutput = ""
           $errorDetected = $false
-          
+
           # Get all PSScriptAnalyzer rules and store them in an array
           $scriptAnalyzerRules = Get-ScriptAnalyzerRule
           $Rules = @()
           $scriptAnalyzerRules | ForEach-Object { $Rules += @{ RuleName = $_.RuleName; Severity = $_.Severity } }
 
-          # Create an array of rule severities to check
+          # Create an array of severities to test
           $Severities = @("Error", "Warning", "Information")
 
-          foreach ($Severity in $Severities) {
-            Describe "Testing PSScriptAnalyzer $Severity rules" -Tag $Severity {
-              It "<RuleName>" -TestCases ($Rules | Where-Object { $_.Severity -eq $Severity }) {
-                param ($RuleName)
+          foreach ($Severity in $Severities) { 
+              Describe "Testing PSScriptAnalyzer $Severity Rules" -Tag $Severity {
+                  It "<RuleName>" -TestCases ($Rules | Where-Object { $_.Severity -eq $Severity }) {
+                      param ($RuleName)
 
-                # Analyze all scripts in the repository for the specified rule
-                $results = Invoke-ScriptAnalyzer -Path ./ -IncludeRule $RuleName -Recurse
-                if ($results) {
-                  foreach ($result in $results) {
-                    $message = "Problem in $($result.ScriptName) at line $($result.Line) with message: $($result.Message)"
-                    Write-Host $message
-                    
-                    # Mark the error as detected
-                    $errorDetected = $true
-
-                    # Append the result to the summary output
-                    $summaryOutput += "$message`n"
+                      # Run PSScriptAnalyzer and capture the results
+                      $results = Invoke-ScriptAnalyzer -Path ./ -IncludeRule $RuleName -Recurse
+                      if ($results) {
+                          foreach ($result in $results) {
+                              $message = "Problem in $($result.ScriptName) at line $($result.Line) with message: $($result.Message)"
+                              Write-Host $message
+                              
+                              # Append result to the summary
+                              $summaryOutput += "$message`n"
+                              
+                              # Set error flag to true if there are problems
+                              $errorDetected = $true
+                          }
+                      }
                   }
-                }
               }
-            }
           }
 
           # Output the summary to the GitHub Actions summary file
@@ -59,12 +59,12 @@ jobs:
             # Add a header for the summary
             $summaryHeader = "### PSScriptAnalyzer Results`n"
             $summaryContent = $summaryHeader + $summaryOutput
-            # Write to the GITHUB_STEP_SUMMARY file
+            # Write the summary content to the GITHUB_STEP_SUMMARY file
             Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $summaryContent
           }
 
-          # Fail the workflow if any errors were detected
+          # If any errors were detected, fail the workflow
           if ($errorDetected) {
-            Write-Host "Errors were detected by PSScriptAnalyzer. Failing the workflow."
-            exit 1
+              Write-Host "Errors were detected by PSScriptAnalyzer. Failing the workflow."
+              exit 1
           }

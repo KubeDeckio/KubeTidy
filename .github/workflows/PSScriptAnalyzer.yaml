@@ -11,7 +11,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Run PSScriptAnalyzer on PowerShell Scripts
-        shell: pwsh
-        run: |
-          Invoke-ScriptAnalyzer -Path ./ -Recurse  -EnableExit
+      # Validate PowerShell Code
+      - name: Run PSScriptAnalyzer
+        uses: microsoft/psscriptanalyzer-action@v1.1
+        with:
+            path: ./
+            includeDefaultRules: true
+            severity: '"Error", "Warning"'
+            recurse: true
+            enableExit: true

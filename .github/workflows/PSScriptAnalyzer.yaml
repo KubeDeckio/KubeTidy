@@ -8,16 +8,44 @@ on:
 jobs:
   analyze:
     runs-on: windows-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      - name: Run PSScriptAnalyzer
-        run: |
-          # Run ScriptAnalyzer and redirect output to a file
-          Invoke-ScriptAnalyzer -Path . | Out-File -FilePath scriptAnalyzerOutput.txt
+      - name: Set up PowerShell
+        uses: actions/setup-powershell@v1
 
-          # Append the results to the GitHub Actions summary page
-          $output = Get-Content -Path scriptAnalyzerOutput.txt
-          Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $output
+      - name: Run PSScriptAnalyzer and handle warnings/errors
+        run: |
+          # Run ScriptAnalyzer and capture the output
+          $results = Invoke-ScriptAnalyzer -Path .
+
+          # Separate the warnings and errors
+          $warnings = $results | Where-Object { $_.Severity -eq 'Warning' }
+          $errors = $results | Where-Object { $_.Severity -eq 'Error' }
+
+          # Output warnings and errors to separate files
+          $warnings | Format-Table -AutoSize | Out-File -FilePath warnings.txt
+          $errors | Format-Table -AutoSize | Out-File -FilePath errors.txt
+
+          # Append warnings to the GitHub Actions summary (if any)
+          if ($warnings) {
+              $warningOutput = Get-Content -Path warnings.txt
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### PSScriptAnalyzer Warnings`n"
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $warningOutput
+          }
+
+          # Append errors to the GitHub Actions summary (if any)
+          if ($errors) {
+              $errorOutput = Get-Content -Path errors.txt
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### PSScriptAnalyzer Errors`n"
+              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $errorOutput
+          }
+
+          # Fail the job if there are any errors
+          if ($errors) {
+              Write-Error "PSScriptAnalyzer found errors."
+          }
+
         shell: pwsh

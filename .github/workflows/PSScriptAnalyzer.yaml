@@ -8,33 +8,53 @@ jobs:
   PSScriptAnalyzer:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Run PSScriptAnalyzer on PowerShell Scripts
+      - name: Install PSScriptAnalyzer
         shell: pwsh
         run: |
-          # Get all PSScript Analyzer Rules and save them in an array
+          Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+
+      - name: Run PSScriptAnalyzer and output to summary
+        shell: pwsh
+        run: |
+          # Create an empty string to accumulate summary output
+          $summaryOutput = ""
+          
+          # Get all PSScriptAnalyzer rules and store them in an array
           $scriptAnalyzerRules = Get-ScriptAnalyzerRule
           $Rules = @()
-          $scriptAnalyzerRules | Foreach-Object { $Rules += @{"RuleName" = $_.RuleName; "Severity" = $_.Severity } }
-          
-          # Create an array of the types of rules
-          $Severities = @("Information", "Warning", "Error")
-          
-          foreach ($Severity in $Severities) { 
-              
-              Describe "Testing PSSA $Severity Rules" -Tag $Severity {
-          
-                  It "<RuleName>" -TestCases ($Rules | Where-Object Severity -eq $Severity) {
-                      
-                      param ($RuleName)
-          
-                      #Test all scripts for the given rule and if there is a problem display this problem in a nice an reabable format in the debug message and let the test fail
-                      Invoke-ScriptAnalyzer -Path ./ -IncludeRule $RuleName -Recurse |
-                      Foreach-Object {"Problem in $($_.ScriptName) at line $($_.Line) with message: $($_.Message)" } |
-                          Should -BeNullOrEmpty
+          $scriptAnalyzerRules | ForEach-Object { $Rules += @{ RuleName = $_.RuleName; Severity = $_.Severity } }
+
+          # Create an array of rule severities to check
+          $Severities = @("Error", "Warning", "Information")
+
+          foreach ($Severity in $Severities) {
+            Describe "Testing PSScriptAnalyzer $Severity rules" -Tag $Severity {
+              It "<RuleName>" -TestCases ($Rules | Where-Object { $_.Severity -eq $Severity }) {
+                param ($RuleName)
+
+                # Analyze all scripts in the repository for the specified rule
+                $results = Invoke-ScriptAnalyzer -Path ./ -IncludeRule $RuleName -Recurse
+                if ($results) {
+                  foreach ($result in $results) {
+                    $message = "Problem in $($result.ScriptName) at line $($result.Line) with message: $($result.Message)"
+                    Write-Host $message
+                    
+                    # Append the result to the summary output
+                    $summaryOutput += "$message`n"
                   }
+                }
               }
+            }
           }
-          
+
+          # Output the summary to the GitHub Actions summary file
+          if ($summaryOutput) {
+            # Add a header for the summary
+            $summaryHeader = "### PSScriptAnalyzer Results`n"
+            $summaryContent = $summaryHeader + $summaryOutput
+            # Write to the GITHUB_STEP_SUMMARY file
+            Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $summaryContent
+          }

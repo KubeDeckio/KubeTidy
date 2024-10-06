@@ -47,4 +47,4 @@ jobs:
         with:
           source-dir: ./docs/
           preview-branch: main
-          umbrella-dir: pr-preview
+          umbrella-dir: docs/pr-preview

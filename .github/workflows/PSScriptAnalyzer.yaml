@@ -16,11 +16,12 @@ jobs:
         run: |
           Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
 
-      - name: Run PSScriptAnalyzer and output to summary
+      - name: Run PSScriptAnalyzer and fail on rule violations
         shell: pwsh
         run: |
           # Create an empty string to accumulate summary output
           $summaryOutput = ""
+          $errorDetected = $false
           
           # Get all PSScriptAnalyzer rules and store them in an array
           $scriptAnalyzerRules = Get-ScriptAnalyzerRule
@@ -42,6 +43,9 @@ jobs:
                     $message = "Problem in $($result.ScriptName) at line $($result.Line) with message: $($result.Message)"
                     Write-Host $message
                     
+                    # Mark the error as detected
+                    $errorDetected = $true
+
                     # Append the result to the summary output
                     $summaryOutput += "$message`n"
                   }
@@ -57,4 +61,10 @@ jobs:
             $summaryContent = $summaryHeader + $summaryOutput
             # Write to the GITHUB_STEP_SUMMARY file
             Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value $summaryContent
+          }
+
+          # Fail the workflow if any errors were detected
+          if ($errorDetected) {
+            Write-Host "Errors were detected by PSScriptAnalyzer. Failing the workflow."
+            exit 1
           }

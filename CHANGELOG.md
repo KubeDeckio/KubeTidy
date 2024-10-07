@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.16] - 2024-10-07
+
+### Fixed
+- **PowerShell Module Submodule Import**: Fixed an issue where submodules were not being correctly imported within the PowerShell module, ensuring smoother module usage and proper functioning of submodule dependencies. Krew module still needs some work.
+
 ## [0.0.15] - 2024-10-02
 
 ### Added

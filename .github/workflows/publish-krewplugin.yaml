@@ -262,7 +262,7 @@ jobs:
         run: |
           $gitVersion = "${{ github.ref_name }}"
           $version = $gitVersion -replace 'v',''
-          $changelogPath = "CHANGELOG.md"
+          $changelogPath = "docs/Changelog.md"
       
           # Read the entire CHANGELOG.md content
           $changelogContent = Get-Content -Path $changelogPath -Raw

@@ -1,6 +1,7 @@
 ---
 title: Changelog
 nav_order: 3
+layout: default
 ---
 
 # Changelog

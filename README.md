@@ -61,7 +61,7 @@ For additional instructions, refer to the [KubeTidy Documentation Site.](https:/
 
 ## Changelog
 
-All notable changes to this project are documented in the [CHANGELOG](./CHANGELOG.md).
+All notable changes to this project are documented in the [CHANGELOG](https://kubetidy.io/changelog).
 
 ## License
 

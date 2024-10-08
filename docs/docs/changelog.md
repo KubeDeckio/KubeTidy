@@ -1,3 +1,9 @@
+---
+title: Change Log
+parent: Documentation
+nav_order: 5
+layout: default
+---
 # Changelog
 
 All notable changes to this project will be documented in this file.

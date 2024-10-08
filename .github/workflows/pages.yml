@@ -38,6 +38,7 @@ jobs:
   # Build job
   build:
     runs-on: ubuntu-latest
+    needs: update
     defaults:
       run:
         working-directory: docs

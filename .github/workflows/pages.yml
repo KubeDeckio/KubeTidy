@@ -27,14 +27,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  update:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      - name: Update changelog
-        run: cat CHANGELOG.md >> docs/docs/changelog.md
-  
   # Build job
   build:
     runs-on: ubuntu-latest
@@ -45,6 +37,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Update changelog
+        run: cat ../../CHANGELOG.md >> changelog.md
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

@@ -37,7 +37,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Update changelog
-        run: cat ../../CHANGELOG.md >> changelog.md
+        run: cat ../CHANGELOG.md >> docs/changelog.md
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:

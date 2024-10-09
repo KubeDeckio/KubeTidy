@@ -33,7 +33,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Update changelog
-        run: cat changelogheader.md CHANGELOG.md > docs/docs/changelog.md
+        run: cat CHANGELOG.md >> docs/docs/changelog.md
   
   # Build job
   build:

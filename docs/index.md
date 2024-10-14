@@ -30,4 +30,4 @@ Check out our [Installation Guide](docs/installation) to get started or [Usage D
 
 - [Installation](docs/installation)
 - [Usage](docs/usage)
-- [GitHub Repository](https://github.com/PixelRobots/KubeTidy)
+- [GitHub Repository](https://github.com/KubeDeckio/KubeTidy)

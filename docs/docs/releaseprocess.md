@@ -49,15 +49,15 @@ Make sure to always review the Netlify preview to confirm that the changes rende
 
 We use several GitHub Actions workflows to automate the release process. You can view the full details of these workflows directly in the repository:
 
-1. **[Publish Module to PowerShell Gallery](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/publish-psgal.yml)**: This action publishes the KubeTidy PowerShell module to the PowerShell Gallery when a tag is pushed.
+1. **[Publish Module to PowerShell Gallery](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/publish-psgal.yml)**: This action publishes the KubeTidy PowerShell module to the PowerShell Gallery when a tag is pushed.
   
-2. **[Publish Plugin to Krew](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/publish-krewplugin.yaml)**: This action packages and publishes the KubeTidy plugin for Linux and macOS, and uploads it to GitHub as release assets.
+2. **[Publish Plugin to Krew](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/publish-krewplugin.yaml)**: This action packages and publishes the KubeTidy plugin for Linux and macOS, and uploads it to GitHub as release assets.
 
-3. **[Deploy Jekyll Site to Pages](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/deploy-docs.yml)**: This action builds and deploys the documentation site to GitHub Pages when changes are pushed to the `docs/` folder.
+3. **[Deploy Jekyll Site to Pages](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/deploy-docs.yml)**: This action builds and deploys the documentation site to GitHub Pages when changes are pushed to the `docs/` folder.
 
 4. **Netlify PR Previews**: Netlify automatically builds and deploys documentation previews for pull requests affecting the `docs/` folder.
 
-5. **[Run PSScriptAnalyzer on Pull Requests](https://github.com/PixelRobots/KubeTidy/blob/main/.github/workflows/PSScriptAnalyzer.yaml)**: This workflow triggers **PSScriptAnalyzer** on every pull request to the `main` branch. It scans PowerShell scripts for code quality, ensuring no warnings or errors are present before merging changes. The results are displayed directly in the GitHub Actions summary as formatted Markdown tables.
+5. **[Run PSScriptAnalyzer on Pull Requests](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/PSScriptAnalyzer.yaml)**: This workflow triggers **PSScriptAnalyzer** on every pull request to the `main` branch. It scans PowerShell scripts for code quality, ensuring no warnings or errors are present before merging changes. The results are displayed directly in the GitHub Actions summary as formatted Markdown tables.
 
 ## Code Quality and Linting
 
@@ -82,4 +82,4 @@ By incorporating this analysis step, we safeguard the code from potential issues
 
 These workflows automate the release process and manage releases across multiple platforms. With Netlify PR previews, contributors and reviewers can verify how documentation updates will appear on the website before they are merged into the `main` branch.
 
-For more details, please refer to the [workflows folder](https://github.com/PixelRobots/KubeTidy/tree/main/.github/workflows) in the repository.
+For more details, please refer to the [workflows folder](https://github.com/KubeDeckio/KubeTidy/tree/main/.github/workflows) in the repository.

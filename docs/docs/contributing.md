@@ -25,7 +25,7 @@ We welcome contributions of all kinds, whether it’s reporting bugs, suggesting
 3. Add the main **KubeTidy** repository as a remote:
 
    ```bash
-   git remote add upstream https://github.com/PixelRobots/KubeTidy.git
+   git remote add upstream https://github.com/KubeDeckio/KubeTidy.git
    ```
 
 ### Set Up Your Development Environment
@@ -92,7 +92,7 @@ All contributions will be reviewed by maintainers. Please be patient, as it may 
 
 ## Code of Conduct
 
-Please follow our [Code of Conduct](https://github.com/PixelRobots/KubeTidy/blob/main/CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment for all contributors.
+Please follow our [Code of Conduct](https://github.com/KubeDeckio/KubeTidy/blob/main/CODE_OF_CONDUCT.md) to ensure a welcoming and respectful environment for all contributors.
 
 ## Thank You!
 

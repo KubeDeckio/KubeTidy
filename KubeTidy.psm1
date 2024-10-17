@@ -3,67 +3,46 @@
 # MARKER: NEW PARAM BLOCK
 
 # Dot Source all functions in all ps1 files located in this module
-Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 | ForEach-Object { . $_.FullName }
+$scriptExecuted = $false
 
-# # Define the path to the local Private directory and Krew storage directory for KubeTidy
-# $localPrivateDir = "./Private"  # Local Private directory
-# $krewStorageDir = "$HOME/.krew/store/kubetidy"  # Krew storage directory
+# Try the first path
+if (Test-Path "$PSScriptRoot\Private") {
+    try {
+        Write-Verbose "Trying to execute scripts from: $PSScriptRoot\Private"
+        Get-ChildItem -Path "$PSScriptRoot\Private\*.ps1" 2>$null | ForEach-Object { 
+            . $_.FullName 
+        }
+        $scriptExecuted = $true
+    } catch {
+        Write-Verbose "Failed to execute scripts from: $PSScriptRoot\Private"
+    }
+} else {
+    Write-Verbose "Path $PSScriptRoot\Private does not exist."
+}
 
-# # Check if the local Private directory exists
-# if (Test-Path -Path $localPrivateDir) {
-#     Write-Verbose "Executing scripts from local Private directory."
+# If the first path fails, try the second path
+if (-not $scriptExecuted) {
+    if (Test-Path "$HOME/.krew/store/kubetidy") {
+        try {
+            Write-Verbose "Trying to execute scripts from: $HOME/.krew/store/kubetidy"
+            Get-ChildItem -Path "$HOME/.krew/store/kubetidy\*.ps1" 2>$null | ForEach-Object { 
+                . $_.FullName 
+            }
+            $scriptExecuted = $true
+        } catch {
+            Write-Verbose "Failed to execute scripts from: $HOME/.krew/store/kubetidy"
+        }
+    } else {
+        Write-Verbose "Path $HOME/.krew/store/kubetidy does not exist."
+    }
+}
 
-#     # Get all .ps1 files in the local Private directory
-#     $localScripts = Get-ChildItem -Path "$localPrivateDir/*.ps1"
+# Exit the script if both paths failed
+if (-not $scriptExecuted) {
+    Write-Error "Failed to execute scripts from both paths. Exiting."
+    exit 1
+}
 
-#     # Execute each .ps1 script found in the local Private directory
-#     foreach ($script in $localScripts) {
-#         Write-Verbose "Executing script: $($script.FullName)"
-#         . $script.FullName  # Call the script
-#     }
-# } else {
-#     Write-Verbose "Local Private directory not found, checking Krew storage."
-
-#     # Check if the KubeTidy storage directory exists
-#     if (Test-Path -Path $krewStorageDir) {
-#         Write-Verbose "Checking for available versions in $krewStorageDir."
-
-#         # Get all version directories (assuming they follow a vX.X.X naming pattern)
-#         $versionDirs = Get-ChildItem -Path $krewStorageDir -Directory | Where-Object { $_.Name -match '^v\d+\.\d+\.\d+$' }
-
-#         # Check if any version directories were found
-#         if ($versionDirs) {
-#             # Get the latest version directory based on the version number
-#             $latestVersionDir = $versionDirs | Sort-Object { [Version]$_.Name.Substring(1) } -Descending | Select-Object -First 1
-
-#             Write-Verbose "Latest version found: $($latestVersionDir.Name)"
-
-#             # Construct the path to the Private directory for the latest version
-#             $kubePrivateDir = Join-Path -Path $latestVersionDir.FullName -ChildPath "Private"
-
-#             # Check if the Private directory exists
-#             if (Test-Path -Path $kubePrivateDir) {
-#                 # Get all .ps1 files in the Private directory
-#                 $scripts = Get-ChildItem -Path "$kubePrivateDir/*.ps1"
-
-#                 # Execute each .ps1 script found
-#                 foreach ($script in $scripts) {
-#                     Write-Verbose "Executing script: $($script.FullName)"
-#                     . $script.FullName  # Call the script
-#                 }
-#             } else {
-#                 Write-Host "No Private directory found for the latest version: $($latestVersionDir.Name)."
-#                 exit 1
-#             }
-#         } else {
-#             Write-Host "No version directories found in $krewStorageDir."
-#             exit 1
-#         }
-#     } else {
-#         Write-Host "Krew storage directory for KubeTidy not found."
-#         exit 1
-#     }
-# }
 
 
 

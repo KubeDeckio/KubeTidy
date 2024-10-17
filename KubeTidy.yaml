@@ -3,22 +3,36 @@ kind: Plugin
 metadata:
   name: kubetidy
 spec:
-  version: "v0.0.14"
-  Homepage: https://kubetidy.io" 
+  version: "v0.0.17"  # Updated version dynamically
+  Homepage: https://kubetidy.io
   platforms:
   - selector:
       matchLabels:
         os: darwin
         arch: amd64
-    uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.14/KubeTidy-darwin-amd64-v0.0.14.tar.gz
-    sha256: "d198611b92865943694322037b2a6c508babf82035ec31e4019396f8452afaf3"
+    uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.17/KubeTidy-darwin-amd64-v0.0.17.tar.gz
+    sha256: "your_sha256_for_darwin_amd64"
+    bin: kubectl-KubeTidy
+  - selector:
+      matchLabels:
+        os: darwin
+        arch: arm64
+    uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.17/KubeTidy-darwin-arm64-v0.0.17.tar.gz
+    sha256: "your_sha256_for_darwin_arm64"
     bin: kubectl-KubeTidy
   - selector:
       matchLabels:
         os: linux
         arch: amd64
-    uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.14/KubeTidy-linux-amd64-v0.0.14.tar.gz
-    sha256: "d198611b92865943694322037b2a6c508babf82035ec31e4019396f8452afaf3"
+    uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.17/KubeTidy-linux-amd64-v0.0.17.tar.gz
+    sha256: "your_sha256_for_linux_amd64"
+    bin: kubectl-KubeTidy
+  - selector:
+      matchLabels:
+        os: linux
+        arch: arm64
+    uri: https://github.com/PixelRobots/KubeTidy/releases/download/v0.0.17/KubeTidy-linux-arm64-v0.0.17.tar.gz
+    sha256: "your_sha256_for_linux_arm64"
     bin: kubectl-KubeTidy
   shortDescription: "A tool to clean up your Kubernetes config."
   description: |

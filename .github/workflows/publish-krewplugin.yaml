@@ -20,111 +20,10 @@ jobs:
         with:
           ref: ${{ github.ref }}  # Check out the branch that triggered the workflow
 
-      # Update the KubeTidy.psm1 file for Krew Plugin using PowerShell
-      - name: Update KubeTidy.psm1 for Krew Plugin
-        shell: pwsh  # Use PowerShell
-        run: |
-          # Create a copy of KubeTidy.psm1 directly in the root
-          $sourceFile = "KubeTidy.psm1"
-          $destinationFile = "kubectl-KubeTidy"
-          Copy-Item -Path $sourceFile -Destination $destinationFile -Force
-          
-          # Read the content of the destination file
-          $content = Get-Content $destinationFile -Raw
-          
-          # Create a regex pattern to capture the entire parameter block
-          $pattern = '# START PARAM BLOCK[\s\S]*?# END PARAM BLOCK'  # Capture the entire block, including newlines
-          
-          # Check if the parameter block exists
-          if ($content -match $pattern) {
-              # Capture the parameter block for verification
-              $paramBlock = $matches[0]
-          
-              # Remove the captured parameter block from the original content
-              $content = $content -replace $pattern, ''  # Remove the entire block
-          
-              # Replace the MARKER: NEW PARAM BLOCK line with the new parameter block
-              $content = $content -replace '# MARKER: NEW PARAM BLOCK', $paramBlock
-          
-              # Prepare the new function call to be inserted
-              $functionCall = @"
-          # Call the function, passing parameters manually for cross-platform compatibility
-          Invoke-KubeTidy \$PSBoundParameters
-          "@
-          
-              # Replace the MARKER: FUNCTION CALL line with the new function call
-              $content = $content -replace '# MARKER: FUNCTION CALL', $functionCall
-          
-              # Save the modified content back to the original script file
-              Set-Content -Path $destinationFile -Value $content
-          
-              Write-Host "$destinationFile has been modified successfully."
-          } else {
-              Write-Host "No parameter block found to remove."
-          }
-
-      # Validate PowerShell Code
-      - name: Run PSScriptAnalyzer and format output in Markdown
-        run: |
-          # Run ScriptAnalyzer and capture the output
-          $results = Invoke-ScriptAnalyzer -Path ./ -Recurse -Severity 'Error', 'Warning' -ExcludeRule PSAvoidUsingWriteHost
-
-          # Separate the warnings and errors
-          $warnings = $results | Where-Object { $_.Severity -eq 'Warning' }
-          $errors = $results | Where-Object { $_.Severity -eq 'Error' }
-
-          # Debug: Output the count of warnings and errors
-          Write-Host "Found $($warnings.Count) warnings"
-          Write-Host "Found $($errors.Count) errors"
-
-          # Create Markdown formatted tables
-          function ConvertTo-MarkdownTable {
-              param ($items)
-              $header = "| RuleName | Severity | ScriptName | Line | Message |"
-              $separator = "| --- | --- | --- | --- | --- |"
-              $rows = foreach ($item in $items) {
-                  "| $($item.RuleName) | $($item.Severity) | $($item.ScriptName) | $($item.Line) | $($item.Message) |"
-              }
-              # Join rows into a single string
-              return "$header`n$separator`n$($rows -join "`n")"
-          }
-
-          # Append warnings to the GitHub Actions summary (if any)
-          if ($warnings.Count -gt 0) {
-              $warningTable = ConvertTo-MarkdownTable -items $warnings
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### PSScriptAnalyzer Warnings`n"
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "$warningTable`n"
-          } else {
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### No Warnings Found`n"
-          }
-
-          # Append errors to the GitHub Actions summary (if any)
-          if ($errors.Count -gt 0) {
-              $errorTable = ConvertTo-MarkdownTable -items $errors
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### PSScriptAnalyzer Errors`n"
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "$errorTable`n"
-          } else {
-              Add-Content -Path $env:GITHUB_STEP_SUMMARY -Value "### No Errors Found`n"
-          }
-
-          # Fail the job if there are any errors
-          if ($errors.Count -gt 0) {
-              Write-Error "PSScriptAnalyzer found errors."
-          }
-
-        shell: pwsh
-
-
-      # Convert line endings from Windows (CRLF) to Unix (LF)
-      - name: Convert Line Endings
-        shell: pwsh  # Use PowerShell
-        run: |
-          (Get-Content "kubectl-KubeTidy" -Raw) -replace "`r`n", "`n" | Set-Content "kubectl-KubeTidy"
-
-      # Create tar.gz files for Linux and Darwin
+      # Create tar.gz files for Linux, Darwin (AMD64, ARM64)
       - name: Create Tar Files
         run: |
-          # Get the version from the previous step
+          # Get the version from the tag
           version="${{ github.ref_name }}"
 
           # Create output directory for the tar files
@@ -132,171 +31,89 @@ jobs:
           mkdir -p "$outputDir"
 
           # Create platform-specific directories
-          linuxDir="$outputDir/linux"
-          darwinDir="$outputDir/darwin"
-          mkdir -p "$linuxDir"
-          mkdir -p "$darwinDir"
+          linuxAmd64Dir="$outputDir/linux_amd64"
+          linuxArm64Dir="$outputDir/linux_arm64"
+          darwinAmd64Dir="$outputDir/darwin_amd64"
+          darwinArm64Dir="$outputDir/darwin_arm64"
+          mkdir -p "$linuxAmd64Dir" "$linuxArm64Dir" "$darwinAmd64Dir" "$darwinArm64Dir"
 
-          # Move the updated script to the appropriate platform directories
-          cp "kubectl-KubeTidy" "$linuxDir/kubectl-KubeTidy"
-          cp "kubectl-KubeTidy" "$darwinDir/kubectl-KubeTidy"
+          # Copy the kubectl-KubeTidy script to each platform directory
+          cp "kubectl-KubeTidy" "$linuxAmd64Dir/kubectl-KubeTidy"
+          cp "kubectl-KubeTidy" "$linuxArm64Dir/kubectl-KubeTidy"
+          cp "kubectl-KubeTidy" "$darwinAmd64Dir/kubectl-KubeTidy"
+          cp "kubectl-KubeTidy" "$darwinArm64Dir/kubectl-KubeTidy"
 
           # Set execute permission for the kubectl-KubeTidy script
-          chmod +x "$linuxDir/kubectl-KubeTidy"
-          chmod +x "$darwinDir/kubectl-KubeTidy"
+          chmod +x "$linuxAmd64Dir/kubectl-KubeTidy"
+          chmod +x "$linuxArm64Dir/kubectl-KubeTidy"
+          chmod +x "$darwinAmd64Dir/kubectl-KubeTidy"
+          chmod +x "$darwinArm64Dir/kubectl-KubeTidy"
 
-          # Copy the Private folder into each platform directory
-          cp -r "Private" "$linuxDir/Private"
-          cp -r "Private" "$darwinDir/Private"
+          # Create tar.gz files for all platforms using the tar command
+          tar -czf "$outputDir/KubeTidy-linux-amd64-$version.tar.gz" -C "$linuxAmd64Dir" .
+          tar -czf "$outputDir/KubeTidy-linux-arm64-$version.tar.gz" -C "$linuxArm64Dir" .
+          tar -czf "$outputDir/KubeTidy-darwin-amd64-$version.tar.gz" -C "$darwinAmd64Dir" .
+          tar -czf "$outputDir/KubeTidy-darwin-arm64-$version.tar.gz" -C "$darwinArm64Dir" .
 
-          # Create tar.gz files for Linux and Darwin using the tar command
-          tar -czf "$outputDir/KubeTidy-linux-amd64-$version.tar.gz" -C "$linuxDir" .
-          tar -czf "$outputDir/KubeTidy-darwin-amd64-$version.tar.gz" -C "$darwinDir" .
-
-      # Generate SHA256 checksums for each tar.gz file
+      # Generate SHA256 Checksums
       - name: Generate SHA256 Checksums
         run: |
           version="${{ github.ref_name }}"
           outputDir="krewplugin"
-          linuxFile="$outputDir/KubeTidy-linux-amd64-$version.tar.gz"
-          darwinFile="$outputDir/KubeTidy-darwin-amd64-$version.tar.gz"
 
-          # Generate checksum for Linux tar.gz
-          linuxChecksumFile="$outputDir/KubeTidy-linux-amd64-$version.sha256"
-          sha256sum "$linuxFile" | awk '{print $1 "  KubeTidy-linux-amd64-'$version'.tar.gz"}' > "$linuxChecksumFile"
+          # Generate checksums for all tar.gz files
+          for file in "$outputDir"/*.tar.gz; do
+            sha256sum "$file" | awk '{print $1 "  " $2}' > "${file}.sha256"
+          done
 
-          # Generate checksum for Darwin tar.gz
-          darwinChecksumFile="$outputDir/KubeTidy-darwin-amd64-$version.sha256"
-          sha256sum "$darwinFile" | awk '{print $1 "  KubeTidy-darwin-amd64-'$version'.tar.gz"}' > "$darwinChecksumFile"
-
-      # # After uploading the Darwin checksum file as a release asset
-      # - name: Update Plugin YAML File
-      #   shell: pwsh  # Use PowerShell
-      #   run: |
-      #     # Read the existing YAML file
-      #     $yamlPath = "KubeTidy.yaml"  # File is in the root of the repository
-      #     $content = Get-Content -Path $yamlPath -Raw
-        
-      #     # Define the new SHA256 checksums
-      #     $version = "${{ github.ref_name }}"
-      #     $linuxSha256 = Get-Content -Path "krewplugin/KubeTidy-linux-amd64-$version.sha256" | Select-Object -First 1
-      #     $darwinSha256 = Get-Content -Path "krewplugin/KubeTidy-darwin-amd64-$version.sha256" | Select-Object -First 1
-        
-      #     # Update the version and SHA256 values in the content
-      #     $content = $content -replace '(?<=version: v)[^"]*', $version
-      #     $content = $content -replace '(?<=sha256: ")[^"]*', $linuxSha256 -replace 'linux', 'darwin'
-      #     $content = $content -replace '(?<=sha256: ")[^"]*', $darwinSha256
-        
-      #     # Save the updated content back to the YAML file
-      #     Set-Content -Path $yamlPath -Value $content
-        
-      #     # Commit the changes
-      #     git config --global user.email "you@example.com"  # Replace with your email
-      #     git config --global user.name "Your Name"  # Replace with your name
-      #     git add $yamlPath
-      #     git commit -m "Update KubeTidy plugin SHA256 checksums and version for $version"
-      #     git push origin HEAD:${{ github.ref_name }}
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-
-      # Create a GitHub release and upload the tar.gz files
-      - name: Create GitHub Release
-        id: create_release
-        uses: actions/create-release@v1
-        with:
-          tag_name: ${{ github.ref_name }} # Use the version from the output
-          release_name: KubeTidy Krew Release ${{ github.ref_name }}
-          draft: false
-          prerelease: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload the Linux tar.gz Release Asset
-      - name: Upload Linux Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/krewplugin/KubeTidy-linux-amd64-${{ github.ref_name }}.tar.gz
-          asset_name: KubeTidy-linux-amd64-${{ github.ref_name }}.tar.gz
-          asset_content_type: application/gzip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload the Darwin tar.gz Release Asset
-      - name: Upload Darwin Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/krewplugin/KubeTidy-darwin-amd64-${{ github.ref_name }}.tar.gz
-          asset_name: KubeTidy-darwin-amd64-${{ github.ref_name }}.tar.gz
-          asset_content_type: application/gzip
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload the Linux checksum file as a release asset
-      - name: Upload Linux Checksum Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/krewplugin/KubeTidy-linux-amd64-${{ github.ref_name }}.sha256
-          asset_name: KubeTidy-linux-amd64-${{ github.ref_name }}.sha256
-          asset_content_type: text/plain
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Upload the Darwin checksum file as a release asset
-      - name: Upload Darwin Checksum Release Asset
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ github.workspace }}/krewplugin/KubeTidy-darwin-amd64-${{ github.ref_name }}.sha256
-          asset_name: KubeTidy-darwin-amd64-${{ github.ref_name }}.sha256
-          asset_content_type: text/plain
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      # Update release notes with CHANGELOG.md content
-      - name: Update Release Notes
-        shell: pwsh  # Use PowerShell
+      # Update KubeTidy.yaml with the new version, URLs, and checksums
+      - name: Update KubeTidy.yaml
         run: |
-          $gitVersion = "${{ github.ref_name }}"
-          $version = $gitVersion -replace 'v',''
-          $changelogPath = "CHANGELOG.md"
-      
-          # Read the entire CHANGELOG.md content
-          $changelogContent = Get-Content -Path $changelogPath -Raw
-      
-          # Extract the section for the specific version
-          if ($changelogContent -match "(?s)## \[$version\].*?(?=## \[|$)") {
-              $changelog = $matches[0]
-          } else {
-              Write-Host "No changelog found for version $version."
-              exit 1
-          }
-      
-          # Save the changelog to a file
-          $changelog | Out-File -FilePath "release_notes.md" -Encoding utf8
-          Write-Host "Release notes saved to release_notes.md."
-      
-          # Check if the file was created successfully
-          if (-Not (Test-Path "release_notes.md")) {
-              Write-Host "Failed to create release_notes.md."
-              exit 1
-          }
-      
-          # Use the GitHub CLI to update the release with the notes
-          gh release edit $gitVersion -F release_notes.md  # Use -F to read release notes from the file
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          version="${{ github.ref_name }}"
+          outputDir="krewplugin"
 
-  # New job to publish the plugin to Krew
-  publish_krew:
-    runs-on: ubuntu-latest
-    needs: publish  # This ensures this job runs only after the publish job completes successfully
-    if: startsWith(github.ref, 'refs/tags/')
+          # Extract SHA256 checksums for each platform
+          sha_linux_amd64=$(cat "$outputDir/KubeTidy-linux-amd64-$version.tar.gz.sha256" | awk '{print $1}')
+          sha_linux_arm64=$(cat "$outputDir/KubeTidy-linux-arm64-$version.tar.gz.sha256" | awk '{print $1}')
+          sha_darwin_amd64=$(cat "$outputDir/KubeTidy-darwin-amd64-$version.tar.gz.sha256" | awk '{print $1}')
+          sha_darwin_arm64=$(cat "$outputDir/KubeTidy-darwin-arm64-$version.tar.gz.sha256" | awk '{print $1}')
 
-    steps:
-      # Publish the plugin to Krew 
-      - name: Update new version in krew-index
-        uses: rajatjindal/krew-release-bot@v0.0.46
+          # Read the KubeTidy.yaml template and update it with the new version and checksums
+          # Update version
+          sed -i "s/version:.*/version: \"$version\"/" KubeTidy.yaml
+          
+          # Update URLs and corresponding SHA256 checksums for each platform
+          # Linux AMD64
+          sed -i "s#uri: .*linux-amd64.*#uri: https://github.com/KubeDeckio/KubeTidy/releases/download/$version/KubeTidy-linux-amd64-$version.tar.gz#" KubeTidy.yaml
+          sed -i "/uri: .*linux-amd64.*/!b;n;s/sha256: \".*\"/sha256: \"$sha_linux_amd64\"/" KubeTidy.yaml
+          
+          # Linux ARM64
+          sed -i "s#uri: .*linux-arm64.*#uri: https://github.com/KubeDeckio/KubeTidy/releases/download/$version/KubeTidy-linux-arm64-$version.tar.gz#" KubeTidy.yaml
+          sed -i "/uri: .*linux-arm64.*/!b;n;s/sha256: \".*\"/sha256: \"$sha_linux_arm64\"/" KubeTidy.yaml
+          
+          # Darwin AMD64
+          sed -i "s#uri: .*darwin-amd64.*#uri: https://github.com/KubeDeckio/KubeTidy/releases/download/$version/KubeTidy-darwin-amd64-$version.tar.gz#" KubeTidy.yaml
+          sed -i "/uri: .*darwin-amd64.*/!b;n;s/sha256: \".*\"/sha256: \"$sha_darwin_amd64\"/" KubeTidy.yaml
+          
+          # Darwin ARM64
+          sed -i "s#uri: .*darwin-arm64.*#uri: https://github.com/KubeDeckio/KubeTidy/releases/download/$version/KubeTidy-darwin-arm64-$version.tar.gz#" KubeTidy.yaml
+          sed -i "/uri: .*darwin-arm64.*/!b;n;s/sha256: \".*\"/sha256: \"$sha_darwin_arm64\"/" KubeTidy.yaml
+
+
+      # Upload Release Assets (Including KubeTidy.yaml)
+      - name: Upload Release Assets
+        run: |
+          version="${{ github.ref_name }}"
+          outputDir="krewplugin"
+
+          # Upload each tar.gz file and its corresponding sha256 file
+          for file in "$outputDir"/*.tar.gz; do
+            asset_name=$(basename "$file")
+            checksum_name="${asset_name}.sha256"
+
+            gh release upload "$version" "$file" --clobber
+            gh release upload "$version" "${file}.sha256" --clobber
+          done
+
+          # Upload KubeTidy.yaml to the release
+          gh release upload "$version" "KubeTidy.yaml" --clobber

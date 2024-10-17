@@ -70,26 +70,26 @@ Get-ChildItem -Path $PSScriptRoot\Private\*.ps1 | ForEach-Object { . $_.FullName
 # Define the function without parameters (parameters are passed via script-level param())
 function Invoke-KubeTidy {
 
-# START PARAM BLOCK
-[CmdletBinding()]
+    # START PARAM BLOCK
+    [CmdletBinding()]
     param (
-    [string]$KubeConfigPath,
-    [array]$ExclusionList,
-    [bool]$Backup = $true,
-    [switch]$Force,
-    [switch]$ListClusters,
-    [switch]$ListContexts,
-    [string]$ExportContexts = "",
-    [array]$MergeConfigs,
-    [string]$DestinationConfig,
-    [switch]$DryRun,
-    [Alias("h")] [switch]$Help
-)
-# END PARAM BLOCK
+        [string]$KubeConfigPath,
+        [array]$ExclusionList,
+        [bool]$Backup = $true,
+        [switch]$Force,
+        [switch]$ListClusters,
+        [switch]$ListContexts,
+        [string]$ExportContexts = "",
+        [array]$MergeConfigs,
+        [string]$DestinationConfig,
+        [switch]$DryRun,
+        [Alias("h")] [switch]$Help
+    )
+    # END PARAM BLOCK
 
-# Only show help if the Help switch is passed
+    # Only show help if the Help switch is passed
     # OR if none of the actual action parameters are provided
-    if ($Help -or (-not $ExclusionList -and -not $ListClusters -and -not $ListContexts -and -not $MergeConfigs -and -not $ExportContexts)) {
+    if ($Help) {
         Write-Host ""
         Write-Host "Parameters:"
         Write-Host "  -KubeConfigPath      Path to your kubeconfig file."
@@ -141,14 +141,20 @@ function Invoke-KubeTidy {
             Enables verbose logging for detailed output.
         #>
                 
-    # Split the ExclusionList by commas to create an array of clusters
-    $ExclusionList = $ExclusionList -split ',' | ForEach-Object { $_.Trim() }
+    # If ExclusionList is not provided, set it to an empty array
+    if (-not $ExclusionList) {
+        $ExclusionList = @()
+    }
+    else {
+        # Split ExclusionList into an array if provided as a string
+        $ExclusionList = $ExclusionList -split ',' | ForEach-Object { $_.Trim() }
+    }
         
-# Check if no parameter was passed
-if (-not $KubeConfigPath) {
-    Write-Verbose "No KubeConfigPath provided. Retrieving default path..."
-    $KubeConfigPath = Get-KubeConfigPath
-}
+    # Check if no parameter was passed
+    if (-not $KubeConfigPath) {
+        Write-Verbose "No KubeConfigPath provided. Retrieving default path..."
+        $KubeConfigPath = Get-KubeConfigPath
+    }
         
     # Check if the powershell-yaml module is installed; if not, install it
     if (-not (Get-Module -ListAvailable -Name powershell-yaml)) {
@@ -156,8 +162,15 @@ if (-not $KubeConfigPath) {
         Install-Module -Name powershell-yaml -Force -Scope CurrentUser
     }
         
-    Import-Module powershell-yaml -ErrorAction Stop
-    Write-Verbose "powershell-yaml module loaded successfully."
+    try {
+        Import-Module powershell-yaml -ErrorAction Stop
+        Write-Verbose "powershell-yaml module loaded successfully."
+    }
+    catch {
+        Write-Host "Failed to load powershell-yaml module. Please install it manually." -ForegroundColor Red
+        return
+    }
+    
         
     if ($MergeConfigs) {
         if (-not $DestinationConfig) {
@@ -209,11 +222,20 @@ if (-not $KubeConfigPath) {
     # Backup original file before cleanup
     if ($Backup -and -not $DryRun) {
         Write-Verbose "Creating a backup of the KubeConfig file."
-        New-Backup -KubeConfigPath $KubeConfigPath
+    
+        # Capture the result of the backup operation using -PassThru
+        $backupResult = New-Backup -KubeConfigPath $KubeConfigPath -PassThru
+
+        # If the backup failed, abort the cleanup process
+        if (-not $backupResult) {
+            Write-Host "Backup failed, aborting cleanup." -ForegroundColor Red
+            return
+        }
     }
     elseif ($DryRun) {
         Write-Host "Dry run enabled: Skipping backup of the KubeConfig file." -ForegroundColor Yellow
     }
+
     
     $removedClusters = @()
     $checkedClusters = 0
@@ -227,7 +249,9 @@ if (-not $KubeConfigPath) {
         $clusterServer = $cluster.cluster.server
         $checkedClusters++
         
-        Write-Progress -Activity "Checking Cluster:" -Status " $clusterName" -PercentComplete (($checkedClusters / $totalClusters) * 100)
+        Write-Progress -Activity "Checking Cluster" `
+            -Status "Checking $clusterName ($checkedClusters of $totalClusters)" `
+            -PercentComplete (($checkedClusters / $totalClusters) * 100)
         
         if ($ExclusionList -contains $clusterName) {
             Write-Verbose "Skipping cluster $clusterName as it is in the exclusion list."
@@ -284,27 +308,27 @@ if (-not $KubeConfigPath) {
     }
     
     # Manually build the YAML for clusters, contexts, and users
-$clustersYaml = @"
+    $clustersYaml = @"
 clusters: `n
 "@
-foreach ($cluster in $kubeConfig.clusters) {
-    $clustersYaml += "  - cluster:`n"
-    $clustersYaml += "      certificate-authority-data: $($cluster.cluster.'certificate-authority-data')`n"
-    $clustersYaml += "      server: $($cluster.cluster.server)`n"
-    $clustersYaml += "    name: $($cluster.name)`n"
-}
+    foreach ($cluster in $kubeConfig.clusters) {
+        $clustersYaml += "  - cluster:`n"
+        $clustersYaml += "      certificate-authority-data: $($cluster.cluster.'certificate-authority-data')`n"
+        $clustersYaml += "      server: $($cluster.cluster.server)`n"
+        $clustersYaml += "    name: $($cluster.name)`n"
+    }
 
-$contextsYaml = @"
+    $contextsYaml = @"
 contexts: `n
 "@
-foreach ($context in $kubeConfig.contexts) {
-    $contextsYaml += "  - context:`n"
-    $contextsYaml += "      cluster: $($context.context.cluster)`n"
-    $contextsYaml += "      user: $($context.context.user)`n"
-    $contextsYaml += "    name: $($context.name)`n"
-}
+    foreach ($context in $kubeConfig.contexts) {
+        $contextsYaml += "  - context:`n"
+        $contextsYaml += "      cluster: $($context.context.cluster)`n"
+        $contextsYaml += "      user: $($context.context.user)`n"
+        $contextsYaml += "    name: $($context.name)`n"
+    }
 
-$usersYaml = @"
+    $usersYaml = @"
 users: `n
 "@
     foreach ($user in $kubeConfig.users) {
@@ -320,7 +344,7 @@ users: `n
         $currentContextYaml = "current-context: $($kubeConfig.'current-context')`n"
     }
     
-$kubeConfigHeader = @"
+    $kubeConfigHeader = @"
 apiVersion: v1
 kind: Config
 preferences: {} `n

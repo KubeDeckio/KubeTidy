@@ -144,6 +144,12 @@ jobs:
           cp "kubectl-KubeTidy" "$darwinAmd64Dir/kubectl-KubeTidy"
           cp "kubectl-KubeTidy" "$darwinArm64Dir/kubectl-KubeTidy"
 
+          # Copy the Private folder to each platform directory
+          cp -r "Private" "$linuxAmd64Dir/Private"
+          cp -r "Private" "$linuxArm64Dir/Private"
+          cp -r "Private" "$darwinAmd64Dir/Private"
+          cp -r "Private" "$darwinArm64Dir/Private"
+
           # Set execute permission for the kubectl-KubeTidy script
           chmod +x "$linuxAmd64Dir/kubectl-KubeTidy"
           chmod +x "$linuxArm64Dir/kubectl-KubeTidy"

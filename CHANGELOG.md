@@ -4,6 +4,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.17] - 2024-10-17
+
+### Added
+- **Darwin ARM64 and Linux ARM64 Support**: Added support for Darwin ARM64 and Linux ARM64 platforms, including building and packaging the respective binaries.
+- **Automatic Update of `KubeTidy.yaml`**: The GitHub Actions workflow now automatically updates the `KubeTidy.yaml` file during the release process. It replaces placeholders with the correct version, URLs, and SHA256 checksums for each platform (Linux/AMD64, Linux/ARM64, Darwin/AMD64, and Darwin/ARM64).
+- **Upload `KubeTidy.yaml` to GitHub Release**: The updated `KubeTidy.yaml` file is now uploaded to the release as an asset, along with the platform-specific tar.gz files and SHA256 checksums.
+
+### Changed
+- **Backup Function Return Status**: Updated the `New-Backup` function to return a success or failure status via the `-PassThru` parameter. The backup process now supports better error handling, allowing the script to abort the cleanup if the backup fails.
+
+### Fixed
+- **Cleanup Without ExclusionList**: Fixed an issue where the cleanup would only run if the `ExclusionList` parameter was provided. The script now defaults the `ExclusionList` to an empty array, allowing cleanup to proceed even when the parameter is not specified.
+
+### Improved
+- **Error Handling for Backups**: Enhanced error handling during the backup process using `try/catch` blocks. If the backup fails, the script stops the cleanup process to prevent data loss.
+
+
 ## [0.0.16] - 2024-10-07
 
 ### Fixed

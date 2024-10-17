@@ -4,7 +4,7 @@ metadata:
   name: kubetidy
 spec:
   version: "v0.0.17"  # Updated version dynamically
-  Homepage: https://kubetidy.io
+  homepage: https://kubetidy.io
   platforms:
   - selector:
       matchLabels:

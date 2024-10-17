@@ -39,7 +39,6 @@ curl -H "Cache-Control: no-cache" -O https://github.com/PixelRobKubeDeckioots/Ku
 
 # Install the plugin using the downloaded KubeTidy.yaml file
 kubectl krew install --manifest="./KubeTidy.yaml"
-
 ```
 
 ## Requirements

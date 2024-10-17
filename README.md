@@ -7,11 +7,12 @@
 
 </br>
 
-![Publish Module to PowerShell Gallery](https://github.com/PixelRobots/KubeTidy/actions/workflows/publish-psgal.yml/badge.svg)
-[![Publish Plugin to Krew](https://github.com/PixelRobots/KubeTidy/actions/workflows/publish-krewplugin.yaml/badge.svg)](https://github.com/PixelRobots/KubeTidy/actions/workflows/publish-krewplugin.yaml)
+![Publish Module to PowerShell Gallery](https://github.com/KubeDeckio/KubeTidy/actions/workflows/publish-psgal.yml/badge.svg)
+[![Publish Plugin to Krew](https://github.com/KubeDeckio/KubeTidy/actions/workflows/publish-krewplugin.yaml/badge.svg)](https://github.com/KubeDeckio/KubeTidy/actions/workflows/publish-krewplugin.yaml)
 ![PowerShell Gallery Version](https://img.shields.io/powershellgallery/v/KubeTidy.svg)
 ![Downloads](https://img.shields.io/powershellgallery/dt/KubeTidy.svg)
-![License](https://img.shields.io/github/license/PixelRobots/KubeTidy.svg)
+![Krew Version](https://img.shields.io/github/v/release/KubeDeckio/KubeTidy?label=Krew%20Version)
+![License](https://img.shields.io/github/license/KubeDeckio/KubeTidy.svg)
 
 ---
 
@@ -49,7 +50,13 @@ Install-Module -Name KubeTidy -Repository PSGallery -Scope CurrentUser
 To install KubeTidy as a kubectl plugin using Krew:
 
 ```bash
-curl -H "Cache-Control: no-cache" -O https://raw.githubusercontent.com/PixelRobots/KubeTidy/main/KubeTidy.yaml
+# Fetch the latest release tag using GitHub's API
+LATEST_VERSION=$(curl -s https://api.github.com/repos/KubeDeckio/KubeTidy/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
+
+# Download the KubeTidy.yaml file from the latest release
+curl -H "Cache-Control: no-cache" -O https://github.com/PixelRobKubeDeckioots/KubeTidy/releases/download/$LATEST_VERSION/KubeTidy.yaml
+
+# Install the plugin using the downloaded KubeTidy.yaml file
 kubectl krew install --manifest="./KubeTidy.yaml"
 ```
 

@@ -35,7 +35,7 @@ To install KubeTidy as a `kubectl` plugin using [Krew](https://krew.sigs.k8s.io/
 LATEST_VERSION=$(curl -s https://api.github.com/repos/KubeDeckio/KubeTidy/releases/latest | grep '"tag_name"' | sed -E 's/.*"([^"]+)".*/\1/')
 
 # Download the KubeTidy.yaml file from the latest release
-curl -H "Cache-Control: no-cache" -O https://github.com/PixelRobKubeDeckioots/KubeTidy/releases/download/$LATEST_VERSION/KubeTidy.yaml
+curl -L -H "Cache-Control: no-cache" -O https://github.com/KubeDeckio/KubeTidy/releases/download/$LATEST_VERSION/KubeTidy.yaml
 
 # Install the plugin using the downloaded KubeTidy.yaml file
 kubectl krew install --manifest="./KubeTidy.yaml"

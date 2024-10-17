@@ -20,12 +20,14 @@ if (Test-Path "$PSScriptRoot\Private") {
     Write-Verbose "Path $PSScriptRoot\Private does not exist."
 }
 
-# If the first path fails, try the second path
+# If the first path fails, try the second path with recursion to handle versioned folders
 if (-not $scriptExecuted) {
     if (Test-Path "$HOME/.krew/store/kubetidy") {
         try {
-            Write-Verbose "Trying to execute scripts from: $HOME/.krew/store/kubetidy"
-            Get-ChildItem -Path "$HOME/.krew/store/kubetidy\*.ps1" 2>$null | ForEach-Object { 
+            Write-Verbose "Trying to execute scripts recursively from: $HOME/.krew/store/kubetidy"
+            
+            # Recursively look for .ps1 files inside the versioned directories
+            Get-ChildItem -Path "$HOME/.krew/store/kubetidy\*.ps1" -Recurse 2>$null | ForEach-Object { 
                 . $_.FullName 
             }
             $scriptExecuted = $true

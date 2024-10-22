@@ -173,7 +173,7 @@ function Invoke-KubeTidy {
         if (-not $DestinationConfig) {
             $DestinationConfig = "$env:USERPROFILE\.kube\config"
         }
-        Show-KubeTidyBanner
+        #Show-KubeTidyBanner
         Write-Host "Merging kubeconfig files..." -ForegroundColor Yellow
                 
         # Call Merge-KubeConfigs with -DryRun only if $DryRun is True
@@ -190,25 +190,25 @@ function Invoke-KubeTidy {
         if (-not $DestinationConfig) {
             $DestinationConfig = "$HOME/.kube/filtered-config"  # Default destination for export
         }
-        Show-KubeTidyBanner
+        #Show-KubeTidyBanner
         Write-Host "Exporting specified contexts: `n$ExportContexts`n" -ForegroundColor Yellow
         Export-KubeContexts -KubeConfigPath $KubeConfigPath -Contexts $ExportContexts -OutputFile $DestinationConfig
         return
     }
         
     if ($ListClusters) {
-        Show-KubeTidyBanner
+        #Show-KubeTidyBanner
         Get-AllClusters -KubeConfigPath $KubeConfigPath
         return
     }
 
     if ($ListContexts) {
-        Show-KubeTidyBanner
+        #Show-KubeTidyBanner
         Get-KubeContexts -KubeConfigPath $KubeConfigPath
         return
     }
         
-    Show-KubeTidyBanner
+    #Show-KubeTidyBanner
     Write-Host "Starting KubeTidy cleanup..." -ForegroundColor Yellow
     Write-Host ""
             
@@ -362,13 +362,14 @@ preferences: {} `n
     $retainedCountText = "{0,5}" -f ($checkedClusters - $removedCount)
     
     Write-Host ""
-    Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Magenta
-    Write-Host "║               KubeTidy Summary                 ║" -ForegroundColor Magenta
-    Write-Host "╠════════════════════════════════════════════════╣" -ForegroundColor Magenta
-    Write-Host "║  Clusters Checked:    $checkedClustersText                    ║" -ForegroundColor Yellow
-    Write-Host "║  Clusters Removed:    $removedCountText                    ║" -ForegroundColor Red
-    Write-Host "║  Clusters Kept:       $retainedCountText                    ║" -ForegroundColor Green
-    Write-Host "╚════════════════════════════════════════════════╝" -ForegroundColor Magenta
+    Write-Host "===============================================" -ForegroundColor Magenta
+    Write-Host "              KubeTidy Summary                 " -ForegroundColor Magenta
+    Write-Host "===============================================" -ForegroundColor Magenta
+    Write-Host "Clusters Checked:    $checkedClustersText" -ForegroundColor Yellow
+    Write-Host "Clusters Removed:    $removedCountText" -ForegroundColor Red
+    Write-Host "Clusters Kept:       $retainedCountText" -ForegroundColor Green
+    Write-Host "===============================================" -ForegroundColor Magenta
+    
 }
 
 # MARKER: FUNCTION CALL

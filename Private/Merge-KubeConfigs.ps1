@@ -92,13 +92,14 @@ users: `n
 
     # Display summary of merged entities
     Write-Host ""
-    Write-Host "╔════════════════════════════════════════════════╗" -ForegroundColor Magenta
-    Write-Host "║            KubeTidy Merge Summary              ║" -ForegroundColor Magenta
-    Write-Host "╠════════════════════════════════════════════════╣" -ForegroundColor Magenta
-    Write-Host "║  Files Merged:     $($MergeConfigs.Count)                           ║" -ForegroundColor Yellow
-    Write-Host "║  Clusters Merged:  $($mergedClusters.Count)                          ║" -ForegroundColor Cyan
-    Write-Host "║  Contexts Merged:  $($mergedContexts.Count)                          ║" -ForegroundColor Cyan
-    Write-Host "║  Users Merged:     $($mergedUsers.Count)                          ║" -ForegroundColor Cyan
-    Write-Host "╚════════════════════════════════════════════════╝" -ForegroundColor Magenta
+    Write-Host "===============================================" -ForegroundColor Magenta
+    Write-Host "              KubeTidy Merge Summary           " -ForegroundColor Magenta
+    Write-Host "===============================================" -ForegroundColor Magenta
+    Write-Host "Files Merged:     $($MergeConfigs.Count)" -ForegroundColor Yellow
+    Write-Host "Clusters Merged:  $($mergedClusters.Count)" -ForegroundColor Cyan
+    Write-Host "Contexts Merged:  $($mergedContexts.Count)" -ForegroundColor Cyan
+    Write-Host "Users Merged:     $($mergedUsers.Count)" -ForegroundColor Cyan
+    Write-Host "===============================================" -ForegroundColor Magenta
     Write-Host ""
+    
 }

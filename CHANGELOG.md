@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.18] - 2024-10-22
+
+### Changed
+- **Removed ASCII Art Banner**: The ASCII art banner was removed from the KubeTidy output as it was not displaying correctly in the new KubeDeck UI. This change improves compatibility with the user interface and enhances the overall visual clarity of the output.
+
 ## [0.0.17] - 2024-10-17
 
 ### Added

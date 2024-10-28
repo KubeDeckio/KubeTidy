@@ -4,63 +4,65 @@
 
 # Dot Source all functions in all ps1 files located in this module
 # Define the path to the local Private directory and Krew storage directory for KubeTidy
-$localPrivateDir = "$PSScriptRoot\Private"  # Local Private directory
+$localPrivateDir = "$PSScriptRoot/Private"  # Local Private directory
 $krewStorageDir = "$HOME/.krew/store/kubetidy"  # Krew storage directory
 
-# Check if the local Private directory exists
-if (Test-Path -Path $localPrivateDir) {
-    Write-Verbose "Executing scripts from local Private directory."
+# Function to import all .ps1 scripts from a specified directory
+function Import-Scripts {
+    param (
+        [string]$directory
+    )
 
-    # Get all .ps1 files in the local Private directory
-    $localScripts = Get-ChildItem -Path "$localPrivateDir/*.ps1" 2>$null
+    # Get all .ps1 files in the specified directory
+    $scripts = Get-ChildItem -Path "$directory/*.ps1" -ErrorAction SilentlyContinue
 
-    # Execute each .ps1 script found in the local Private directory
-    foreach ($script in $localScripts) {
+    # Execute each .ps1 script found in the directory
+    foreach ($script in $scripts) {
         Write-Verbose "Executing script: $($script.FullName)"
         . $script.FullName  # Call the script
     }
+}
+
+# Check if the local Private directory exists and import scripts if it does
+if (Test-Path -Path $localPrivateDir) {
+    Write-Verbose "Executing scripts from local Private directory."
+    Import-Scripts -directory $localPrivateDir
 } else {
-    Write-Verbose "Local Private directory not found, checking Krew storage."
+    Write-Verbose "Local Private directory not found."
+}
 
-    # Check if the KubeTidy storage directory exists
-    if (Test-Path -Path $krewStorageDir) {
-        Write-Verbose "Checking for available versions in $krewStorageDir."
+# Check if the KubeTidy storage directory exists
+if (Test-Path -Path $krewStorageDir) {
+    Write-Verbose "Checking for available versions in $krewStorageDir."
 
-        # Get all version directories (assuming they follow a vX.X.X naming pattern)
-        $versionDirs = Get-ChildItem -Path $krewStorageDir -Directory | Where-Object { $_.Name -match '^v\d+\.\d+\.\d+$' }
+    # Get all version directories (assuming they follow a vX.X.X naming pattern)
+    $versionDirs = Get-ChildItem -Path $krewStorageDir -Directory | Where-Object { $_.Name -match '^v\d+\.\d+\.\d+$' }
 
-        # Check if any version directories were found
-        if ($versionDirs) {
-            # Get the latest version directory based on the version number
-            $latestVersionDir = $versionDirs | Sort-Object { [Version]$_.Name.Substring(1) } -Descending | Select-Object -First 1
+    # Check if any version directories were found
+    if ($versionDirs) {
+        # Get the latest version directory based on the version number
+        $latestVersionDir = $versionDirs | Sort-Object { [Version]$_.Name.Substring(1) } -Descending | Select-Object -First 1
 
-            Write-Verbose "Latest version found: $($latestVersionDir.Name)"
+        Write-Verbose "Latest version found: $($latestVersionDir.Name)"
 
-            # Construct the path to the Private directory for the latest version
-            $kubePrivateDir = Join-Path -Path $latestVersionDir.FullName -ChildPath "Private"
+        # Construct the path to the Private directory for the latest version
+        $kubePrivateDir = Join-Path -Path $latestVersionDir.FullName -ChildPath "Private"
 
-            # Check if the Private directory exists in the latest version
-            if (Test-Path -Path $kubePrivateDir) {
-                # Get all .ps1 files in the Private directory
-                $scripts = Get-ChildItem -Path "$kubePrivateDir/*.ps1" 2>$null
-
-                # Execute each .ps1 script found
-                foreach ($script in $scripts) {
-                    Write-Verbose "Executing script: $($script.FullName)"
-                    . $script.FullName  # Call the script
-                }
-            } else {
-                Write-Error "No Private directory found for the latest version: $($latestVersionDir.Name). Exiting."
-                exit 1
-            }
+        # Check if the Private directory exists in the latest version and import scripts if it does
+        if (Test-Path -Path $kubePrivateDir) {
+            Write-Verbose "Executing scripts from KubeTidy Private directory for version: $($latestVersionDir.Name)"
+            Import-Scripts -directory $kubePrivateDir
         } else {
-            Write-Error "No version directories found in $krewStorageDir. Exiting."
+            Write-Error "No Private directory found for the latest version: $($latestVersionDir.Name). Exiting."
             exit 1
         }
     } else {
-        Write-Error "Krew storage directory for KubeTidy not found. Exiting."
+        Write-Error "No version directories found in $krewStorageDir. Exiting."
         exit 1
     }
+} else {
+    Write-Error "Krew storage directory for KubeTidy not found. Exiting."
+    exit 1
 }
 
 
@@ -137,6 +139,8 @@ function Invoke-KubeTidy {
         .PARAMETER Verbose
             Enables verbose logging for detailed output.
         #>
+
+    Show-KubeTidyBanner
                 
     # If ExclusionList is not provided, set it to an empty array
     if (-not $ExclusionList) {

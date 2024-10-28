@@ -31,7 +31,7 @@ function Get-KubeConfigPath {
             $KubeConfigPath = "$HOME/.kube/config"
         }
         
-        Write-Host "KubeConfig Path: $KubeConfigPath" -ForegroundColor Yellow
+        Write-Host "KubeConfig Path: $KubeConfigPath `n" -ForegroundColor Yellow
     }
 
     # Return the KubeConfigPath

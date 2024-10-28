@@ -4,6 +4,14 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.19] - 2024-10-28
+
+### Changed
+- **Re-added ASCII Art Banner**: The ASCII art banner has been reintroduced to the KubeTidy output after adjustments to ensure it displays correctly in the updated KubeDeck UI. This change improves compatibility and enhances the visual clarity of the output for users.
+
+### Fixed
+- **MacOS ARM Compatibility in Krew**: Updated the loading process for PowerShell modules to restore support for macOS ARM systems, similar to the compatibility achieved in version 0.0.14.
+
 ## [0.0.18] - 2024-10-22
 
 ### Changed

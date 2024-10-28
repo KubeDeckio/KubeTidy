@@ -142,7 +142,7 @@ function Invoke-KubeTidy {
             Enables verbose logging for detailed output.
         #>
 
-    Show-KubeTidyBanner
+    #Show-KubeTidyBanner
                 
     # If ExclusionList is not provided, set it to an empty array
     if (-not $ExclusionList) {

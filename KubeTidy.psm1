@@ -84,6 +84,7 @@ function Invoke-KubeTidy {
         [array]$MergeConfigs,
         [string]$DestinationConfig,
         [switch]$DryRun,
+        [switch]$UI,
         [Alias("h")] [switch]$Help
     )
     # END PARAM BLOCK
@@ -104,6 +105,10 @@ function Invoke-KubeTidy {
         Write-Host "  -DryRun              Simulate the cleanup process without making changes."
         Write-Host "  -Help                Display this help message."
         return
+    }
+
+    if (!$UI) {
+        Show-KubeTidyBanner
     }
 
     <#
@@ -142,8 +147,6 @@ function Invoke-KubeTidy {
             Enables verbose logging for detailed output.
         #>
 
-    #Show-KubeTidyBanner
-                
     # If ExclusionList is not provided, set it to an empty array
     if (-not $ExclusionList) {
         $ExclusionList = @()
@@ -179,7 +182,6 @@ function Invoke-KubeTidy {
         if (-not $DestinationConfig) {
             $DestinationConfig = "$env:USERPROFILE\.kube\config"
         }
-        #Show-KubeTidyBanner
         Write-Host "Merging kubeconfig files..." -ForegroundColor Yellow
                 
         # Call Merge-KubeConfigs with -DryRun only if $DryRun is True
@@ -196,25 +198,21 @@ function Invoke-KubeTidy {
         if (-not $DestinationConfig) {
             $DestinationConfig = "$HOME/.kube/filtered-config"  # Default destination for export
         }
-        #Show-KubeTidyBanner
         Write-Host "Exporting specified contexts: `n$ExportContexts`n" -ForegroundColor Yellow
         Export-KubeContexts -KubeConfigPath $KubeConfigPath -Contexts $ExportContexts -OutputFile $DestinationConfig
         return
     }
         
     if ($ListClusters) {
-        #Show-KubeTidyBanner
         Get-AllClusters -KubeConfigPath $KubeConfigPath
         return
     }
 
     if ($ListContexts) {
-        #Show-KubeTidyBanner
         Get-KubeContexts -KubeConfigPath $KubeConfigPath
         return
     }
         
-    #Show-KubeTidyBanner
     Write-Host "Starting KubeTidy cleanup..." -ForegroundColor Yellow
     Write-Host ""
             

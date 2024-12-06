@@ -18,6 +18,22 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+              # Extract and update module version from Git tag
+      - name: Set Module Version from Git Tag
+        id: set_version
+        run: |
+          # Extract version from the Git tag, trimming the 'v' prefix
+          $tagVersion = '${{ github.ref_name }}' -replace '^v', ''
+          Write-Host "Setting module version to $tagVersion"
+  
+          # Load and update the ModuleVersion in the .psd1 file
+          (Get-Content ./KubeTidy.psd1) -replace "ModuleVersion = '.*'", "ModuleVersion = '$tagVersion'" |
+              Set-Content ./KubeTidy.psd1
+  
+          # Output for use in later steps
+          echo "::set-output name=version::$tagVersion"
+        shell: pwsh
+
       # Validate PowerShell Code
       - name: Run PSScriptAnalyzer and format output in Markdown
         run: |

@@ -39,7 +39,7 @@ Description = 'A tool to clean up Kubernetes config files.'
 # PowerShellHostName = ''
 
 # Minimum version of the PowerShell host required by this module
-# PowerShellHostVersion = ''
+PowerShellHostVersion = '7.0'
 
 # Minimum version of Microsoft .NET Framework required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
 # DotNetFrameworkVersion = ''
@@ -98,16 +98,16 @@ PrivateData = @{
         Tags = @('Kubernetes', 'PowerShell', 'Windows', 'DevOps', 'KubeTidy', 'kubeconfig')
 
         # A URL to the license for this module.
-        LicenseUri = 'https://github.com/PixelRobots/KubeTidy/blob/main/LICENSE'
+        LicenseUri = 'https://github.com/KubeDeckio/KubeTidy/blob/main/LICENSE'
 
         # A URL to the main website for this project.
-        ProjectUri = 'https://github.com/PixelRobots/KubeTidy/'
+        ProjectUri = 'https://github.com/KubeDeckio/KubeTidy/'
 
         # A URL to an icon representing this module.
-        IconUri = 'https://github.com/PixelRobots/KubeTidy/blob/main/images/KubeTidy.png'
+        IconUri = 'https://github.com/KubeDeckio/KubeTidy/blob/main/images/KubeTidy.png'
 
         # ReleaseNotes of this module
-        ReleaseNotes = 'https://github.com/PixelRobots/KubeTidy/blob/main/README.md'
+        ReleaseNotes = 'https://github.com/KubeDeckio/KubeTidy/blob/main/README.md'
 
         # Prerelease string of this module
         # Prerelease = ''

@@ -22,7 +22,6 @@ KubeTidy is a PowerShell tool that simplifies managing your Kubernetes `kubeconf
 - **List & Export Options**: List or export clusters and contexts without making changes.
 - **Dry Run Mode**: Simulate cleanup or merging operations to preview the results.
 - **Verbose Logging**: Get detailed logs for all operations using the `-Verbose` flag.
-folowing
 
 
 Check out our [Installation Guide](docs/installation) to get started or [Usage Documentation](docs/usage) to explore how you can use KubeTidy.

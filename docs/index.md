@@ -4,6 +4,8 @@ nav_order: 1
 layout: home
 ---
 
+## We have a new Logo!
+
 <p align="center">
 <img id="logo" src="assets/images/KubeTidyDark.png" />
 </p>

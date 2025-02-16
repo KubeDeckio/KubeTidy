@@ -7,53 +7,123 @@ layout: default
 
 # Krew Plugin Usage
 
-If you're using **KubeTidy** via Krew as a `kubectl` plugin (Linux/macOS), here are the usage examples to help you manage your `kubeconfig` files.
+If you're using **KubeTidy** via Krew as a `kubectl` plugin (Linux/macOS), this guide will help you clean up, manage, and optimize your `kubeconfig` files.
 
-## Clean Up Unreachable Clusters
+## Available Commands
 
-To clean up unreachable clusters from your `kubeconfig`, use the following command:
+The following table provides a quick reference for KubeTidy commands when used as a Krew plugin:
+
+| Action                    | Command Example |
+|---------------------------|----------------|
+| Remove unreachable clusters | `kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exclusionlist "cluster1,cluster2"` |
+| Merge kubeconfig files | `kubectl kubetidy -mergeconfigs "config1.yaml" "config2.yaml" -destinationconfig "$HOME/.kube/config"` |
+| List clusters | `kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listclusters` |
+| List contexts | `kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listcontexts` |
+| Export specific contexts | `kubectl kubetidy -exportcontexts "context1,context2" -destinationconfig "$HOME/.kube/filtered-config"` |
+| Run in dry-run mode | `kubectl kubetidy -kubeconfig "$HOME/.kube/config" -dryrun` |
+| Enable verbose logging | `kubectl kubetidy -kubeconfig "$HOME/.kube/config" -verbose` |
+
+## 1. Backup and Restore
+
+KubeTidy automatically creates a backup before modifying your kubeconfig file unless `-dryrun` is enabled. If you need to restore the original kubeconfig, locate the backup file:
+
+```bash
+$HOME/.kube/config.backup
+```
+
+You can also create a manual backup before running KubeTidy:
+
+```bash
+cp "$HOME/.kube/config" "$HOME/.kube/config.backup"
+```
+
+## 2. Cleaning Up Unreachable Clusters
+
+If your `kubeconfig` contains outdated or unreachable clusters, KubeTidy can remove them automatically. The following command will clean up all unreachable clusters while keeping those listed in `-exclusionlist`:
 
 ```bash
 kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exclusionlist "cluster1,cluster2"
 ```
 
-## Merging Kubeconfig Files
+By default, KubeTidy will create a backup of your `kubeconfig` before making changes. If you only want to preview the changes, use the `-dryrun` option.
 
-To merge multiple `kubeconfig` files into a single one:
+## 3. Handling Current Context
+
+If the cluster associated with your `current-context` is removed during cleanup, KubeTidy will unset it. If this happens, set a new context manually:
+
+```bash
+kubectl config use-context <new-context>
+```
+
+To check your current context before running KubeTidy:
+
+```bash
+kubectl config current-context
+```
+
+## 4. Merging Multiple Kubeconfig Files
+
+If you manage multiple Kubernetes environments, you may need to merge several kubeconfig files into one. Use the following command to combine them:
 
 ```bash
 kubectl kubetidy -mergeconfigs "config1.yaml" "config2.yaml" -destinationconfig "$HOME/.kube/config"
 ```
 
-## Listing Clusters
-
-To list all clusters in your `kubeconfig` without making changes:
-
-```bash
-kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listclusters
-```
-
-## Listing Contexts
-
-To list all contexts in your `kubeconfig`:
-
-```bash
-kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listcontexts
-```
-
-## Dry Run Mode
-
-Use the `-dryrun` option to simulate the cleanup process without modifying your `kubeconfig`:
-
-```bash
-kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exclusionlist "cluster1" -dryrun
-```
-
-The Dry Run Mode also works for merging multiple kubeconfig files. This allows you to preview a summary of the merge without making any actual changes to the destination file.
+To preview the merge process without making changes:
 
 ```bash
 kubectl kubetidy -mergeconfigs "config1.yaml" "config2.yaml" -destinationconfig "$HOME/.kube/config" -dryrun
 ```
 
+## 5. Exporting Specific Contexts
 
-For detailed logging examples, check out our [Logging and Output](../logging-output) page.
+You might need to extract specific contexts from a large kubeconfig file to create a smaller, focused configuration. The following command exports only the specified contexts:
+
+```bash
+kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exportcontexts "context1,context2" -destinationconfig "$HOME/.kube/filtered-config"
+```
+
+This is useful when sharing configuration files without exposing unnecessary clusters.
+
+## 6. Using Dry Run Mode
+
+Use the `-dryrun` option to simulate the cleanup process without making changes. This helps you understand what will be removed before running the actual cleanup:
+
+```bash
+kubectl kubetidy -kubeconfig "$HOME/.kube/config" -exclusionlist "cluster1" -dryrun
+```
+
+Dry Run Mode also applies to merging kubeconfig files. Run the following command to preview a merge:
+
+```bash
+kubectl kubetidy -mergeconfigs "config1.yaml" "config2.yaml" -destinationconfig "$HOME/.kube/config" -dryrun
+```
+
+## 7. Listing Clusters
+
+To display all clusters in your kubeconfig without modifying it:
+
+```bash
+kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listclusters
+```
+
+## 8. Listing Contexts
+
+To see all available contexts in your kubeconfig:
+
+```bash
+kubectl kubetidy -kubeconfig "$HOME/.kube/config" -listcontexts
+```
+
+## 9. Enabling Verbose Logging
+
+For detailed logging, use the `-verbose` flag:
+
+```bash
+kubectl kubetidy -kubeconfig "$HOME/.kube/config" -verbose
+```
+
+This provides additional details on each step, such as cluster reachability checks and file modifications.
+
+For more information on logging and output, refer to the [Logging and Output](../logging-output) page.
+

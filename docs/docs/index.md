@@ -4,18 +4,31 @@ nav_order: 2
 layout: default
 ---
 
-# Documentation
+# 📖 KubeTidy Documentation
 
-Welcome to the **KubeTidy** documentation! This section will guide you through everything you need to know to use and contribute to KubeTidy effectively. Whether you're new to the project or an experienced user, you'll find all the information you need here to help you manage and clean up your Kubernetes manifests.
+Welcome to the **KubeTidy** documentation! This is your complete guide to installing, using, and contributing to KubeTidy. Whether you're just getting started or an advanced user, you'll find everything you need here to manage and streamline your Kubernetes configurations efficiently.
 
-### Why KubeTidy?
-KubeTidy is designed to organize Kubernetes manifests into a more readable format. It automatically sorts resources, aligns indentation, and removes unnecessary clutter, making it easier to maintain and review Kubernetes configurations. 
+## ✨ Why Use KubeTidy?
 
-### Getting Started
-You can dive right in by exploring the following sections:
+🚀 **Built with PowerShell** – Cross-platform support for Windows, Linux, and macOS.  
+🛠️ **Automated Kubeconfig Management** – Clean up, merge, and optimize `kubeconfig` files effortlessly.  
+📌 **Backup & Restore** – Automatically creates backups before making changes.  
+📊 **Verbose Logging & Dry Run Mode** – Gain full transparency and safely preview changes before applying them.
 
-1. [Installation Guide](/docs/installation): Learn how to install KubeTidy and configure it for your environment.
-2. [Usage](/docs/usage): Step-by-step instructions for tidying your Kubernetes manifests.
-3. [Contributing](/docs/contributing): Want to contribute? Check out our guidelines for developers and contributors.
+## 📌 Getting Started
+Jump into the key sections below:
 
-Stay tuned for more updates and enhancements as the project evolves!
+### 🔹 [Installation Guide](docs/installation)
+Learn how to install KubeTidy and configure it for your environment.
+
+### 🔹 [Usage Guide](docs/usage)
+Step-by-step instructions to manage and optimize your Kubernetes configurations.
+
+### 🔹 [Logging & Output](docs/logging-output)
+Understand detailed logging, error messages, and debugging techniques.
+
+### 🔹 [Contributing](docs/contributing)
+Want to contribute? Check out the developer and contributor guidelines.
+
+Stay updated as we continue to enhance KubeTidy with new features and improvements!
+

@@ -9,7 +9,14 @@ layout: default
 
 KubeTidy provides detailed output and logging for each operation. You can use the `-Verbose` flag to see detailed information about cluster reachability, user and context removal, and more.
 
-## Verbose Logging Example
+## Available Logging Options
+
+| Logging Type   | Command Example | Description |
+|---------------|----------------|-------------|
+| Verbose Logs | `Invoke-KubeTidy -Verbose` | Shows detailed action logs, such as cluster checks and cleanup actions. |
+| Capture Logs | `Invoke-KubeTidy -Verbose *>&1 | Tee-Object -FilePath "$HOME/kubetidy.log"` | Saves logs for later review. |
+
+## 1. Using Verbose Logging
 
 Use the `-Verbose` flag for detailed logging during the cleanup process:
 
@@ -27,7 +34,17 @@ VERBOSE: Removed associated user: aks-old-user
 VERBOSE: Backup of kubeconfig created: C:\Users\username\.kube\config.backup
 ```
 
-## Summary Output
+## 2. Capturing Logs to a File
+
+For longer operations or troubleshooting, you can capture logs to a file for later analysis:
+
+```powershell
+Invoke-KubeTidy -KubeConfigPath "$HOME\.kube\config" -Verbose *>&1 | Tee-Object -FilePath "$HOME/kubetidy.log"
+```
+
+This will save all logs, including errors and warnings, to `kubetidy.log`.
+
+## 3. Summary Output
 
 After running KubeTidy, a summary is displayed showing how many clusters were checked, removed, or retained:
 
@@ -41,4 +58,26 @@ After running KubeTidy, a summary is displayed showing how many clusters were ch
 ╚════════════════════════════════════════════════╝
 ```
 
-![KubeTidy Cleanup Summary](../../../assets/images/summary.png)
+## 4. Logging for Merging Kubeconfig Files
+
+When merging multiple kubeconfig files, verbose logging provides insight into the process:
+
+```
+VERBOSE: Merging kubeconfig files: config1.yaml, config2.yaml
+VERBOSE: Writing merged config to: C:\Users\username\.kube\config
+```
+
+This helps track which files are being processed and whether any conflicts occur.
+
+## 5. Common Error Messages
+
+If an error occurs, KubeTidy provides detailed error messages. Below are some common ones and their solutions:
+
+| Error Message | Meaning | Solution |
+|--------------|---------|----------|
+| `ERROR: No clusters are reachable. Use '-Force' to proceed.` | No clusters responded to the reachability check. | Add `-Force` to continue with cleanup. |
+| `ERROR: KubeConfig file not found at specified path.` | The kubeconfig path provided is incorrect. | Verify the path and ensure the file exists. |
+| `ERROR: Failed to load powershell-yaml module.` | The required module is missing. | Run `Install-Module -Name powershell-yaml -Force -Scope CurrentUser`. |
+
+For more information, refer to the [KubeTidy Usage](../usage) page.
+

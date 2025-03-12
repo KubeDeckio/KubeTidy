@@ -24,7 +24,7 @@ Learn how to install KubeTidy and configure it for your environment.
 ### 🔹 [Usage Guide](./usage)
 Step-by-step instructions to manage and optimize your Kubernetes configurations.
 
-### 🔹 [Logging & Output](./logging-output)
+### 🔹 [Logging & Output](./usage/logging-output)
 Understand detailed logging, error messages, and debugging techniques.
 
 ### 🔹 [Contributing](./contributing)

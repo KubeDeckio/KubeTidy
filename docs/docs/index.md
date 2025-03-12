@@ -18,16 +18,16 @@ Welcome to the **KubeTidy** documentation! This is your complete guide to instal
 ## 📌 Getting Started
 Jump into the key sections below:
 
-### 🔹 [Installation Guide](/installation)
+### 🔹 [Installation Guide](./installation)
 Learn how to install KubeTidy and configure it for your environment.
 
-### 🔹 [Usage Guide](/usage)
+### 🔹 [Usage Guide](./usage)
 Step-by-step instructions to manage and optimize your Kubernetes configurations.
 
-### 🔹 [Logging & Output](/logging-output)
+### 🔹 [Logging & Output](./logging-output)
 Understand detailed logging, error messages, and debugging techniques.
 
-### 🔹 [Contributing](/contributing)
+### 🔹 [Contributing](./contributing)
 Want to contribute? Check out the developer and contributor guidelines.
 
 Stay updated as we continue to enhance KubeTidy with new features and improvements!

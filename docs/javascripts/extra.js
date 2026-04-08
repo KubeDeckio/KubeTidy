@@ -1,4 +1,4 @@
-var ktTopScrollBound = false;
+var kbTopScrollBound = false;
 
 function kubeTidySyncTopButton() {
   var topButton = document.querySelector(".md-top");
@@ -7,18 +7,18 @@ function kubeTidySyncTopButton() {
   }
 
   if (window.scrollY > 240) {
-    topButton.classList.add("kt-top-visible");
+    topButton.classList.add("kb-top-visible");
   } else {
-    topButton.classList.remove("kt-top-visible");
+    topButton.classList.remove("kb-top-visible");
   }
 }
 
 function kubeTidyBindTopButton() {
   kubeTidySyncTopButton();
 
-  if (!ktTopScrollBound) {
+  if (!kbTopScrollBound) {
     window.addEventListener("scroll", kubeTidySyncTopButton, { passive: true });
-    ktTopScrollBound = true;
+    kbTopScrollBound = true;
   }
 }
 

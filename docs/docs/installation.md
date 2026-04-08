@@ -1,10 +1,10 @@
 # Installing KubeTidy
 
-You can install KubeTidy through PowerShell Gallery, Krew, Go, or GitHub release binaries.
+Choose the installation method that best fits how you want to run **KubeTidy**: from PowerShell, through `kubectl`, directly as a CLI, or from a release binary.
 
 ## PowerShell Gallery
 
-Install the PowerShell module if you want the `Invoke-KubeTidy` command:
+Install the PowerShell module if you want to use **KubeTidy** with the `Invoke-KubeTidy` command:
 
 ```powershell
 Install-Module -Name KubeTidy -Repository PSGallery -Scope CurrentUser
@@ -16,11 +16,11 @@ Update it with:
 Update-Module -Name KubeTidy
 ```
 
-This gives you the `Invoke-KubeTidy` command in PowerShell.
+This is the best option if you mainly work in PowerShell or want to use KubeTidy in existing PowerShell scripts.
 
 ## Krew
 
-Install the `kubectl` plugin:
+Install the `kubectl` plugin if you want to run **KubeTidy** as part of your Kubernetes command workflow:
 
 ```bash
 kubectl krew install kubetidy
@@ -32,11 +32,11 @@ Update it with:
 kubectl krew upgrade kubetidy
 ```
 
-This gives you the `kubectl kubetidy` command.
+This is a good fit if you prefer to keep kubeconfig tooling alongside your existing `kubectl` workflow.
 
 ## Go install
 
-Install the `kubetidy` command directly:
+Install the `kubetidy` command directly if you want the standalone CLI:
 
 ```bash
 go install github.com/KubeDeckio/KubeTidy/cmd/kubetidy@latest

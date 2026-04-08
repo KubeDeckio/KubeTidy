@@ -1,6 +1,6 @@
 # Logging and Output
 
-KubeTidy supports verbose logging in both PowerShell and CLI usage.
+This page explains how **KubeTidy** reports progress, summaries, and errors in both PowerShell and CLI usage.
 
 ## Examples
 

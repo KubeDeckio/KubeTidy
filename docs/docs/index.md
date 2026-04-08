@@ -2,7 +2,7 @@
 
 KubeTidy is a kubeconfig management tool for Kubernetes users who need to clean up stale clusters, merge configs, and safely export just the contexts they care about.
 
-You can use it in three ways:
+You can use KubeTidy in the way that fits your workflow best:
 
 - `kubetidy`
 - `kubectl kubetidy`

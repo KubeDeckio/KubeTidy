@@ -1,6 +1,6 @@
 # PowerShell Usage
 
-Use `Invoke-KubeTidy` when you want to work with KubeTidy from PowerShell.
+If you're using **KubeTidy** with PowerShell, this guide shows how to clean up, inspect, and manage your `kubeconfig` files with `Invoke-KubeTidy`.
 
 ## Common commands
 

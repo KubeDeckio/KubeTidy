@@ -1,0 +1,262 @@
+name: Publish KubeTidy Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+jobs:
+  go-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version-file: go.mod
+
+      - name: Run Go tests
+        run: go test ./...
+
+  docs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Setup Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6
+        with:
+          python-version: "3.11"
+
+      - name: Install docs dependencies
+        run: python -m pip install -r requirements-docs.txt
+
+      - name: Update changelog page
+        run: cat CHANGELOG.md > docs/changelog.md
+
+      - name: Build docs
+        run: mkdocs build --strict
+
+  build-and-release:
+    needs:
+      - go-test
+      - docs
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    env:
+      TAG: ${{ github.ref_name }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+        with:
+          persist-credentials: false
+
+      - name: Detect prerelease tag
+        id: prerelease
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag="${TAG#v}"
+          if [[ "$tag" =~ ^([0-9]+\.[0-9]+\.[0-9]+)-(.+)$ ]]; then
+            echo "is_prerelease=true" >> "$GITHUB_OUTPUT"
+            echo "stable_version=${BASH_REMATCH[1]}" >> "$GITHUB_OUTPUT"
+            echo "prerelease_label=${BASH_REMATCH[2]}" >> "$GITHUB_OUTPUT"
+          else
+            echo "is_prerelease=false" >> "$GITHUB_OUTPUT"
+            echo "stable_version=$tag" >> "$GITHUB_OUTPUT"
+            echo "prerelease_label=" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Setup Go
+        uses: actions/setup-go@4a3601121dd01d1626a1e23e37211e3254c1c06c # v6
+        with:
+          go-version-file: go.mod
+
+      - name: Set PowerShell manifest version from tag
+        shell: pwsh
+        run: |
+          $version = "${{ steps.prerelease.outputs.stable_version }}"
+          $prerelease = "${{ steps.prerelease.outputs.prerelease_label }}"
+          $manifestPath = "./KubeTidy.psd1"
+          $content = Get-Content $manifestPath -Raw
+
+          $content = $content -replace "^\s*ModuleVersion\s*=\s*'.*'", "ModuleVersion = '$version'"
+
+          if ([string]::IsNullOrWhiteSpace($prerelease)) {
+            $content = $content -replace "(?ms)\r?\n\s*Prerelease\s*=\s*'.*?'", ""
+          }
+          else {
+            if ($content -match "(?ms)PSData\s*=\s*@\{") {
+              if ($content -match "(?ms)\r?\n\s*Prerelease\s*=\s*'.*?'") {
+                $content = $content -replace "(?ms)(\r?\n\s*Prerelease\s*=\s*').*?(')", "`$1$prerelease`$2"
+              }
+              else {
+                $content = $content -replace "(?ms)(PSData\s*=\s*@\{)", "`$1`r`n        Prerelease = '$prerelease'"
+              }
+            }
+          }
+
+          Set-Content -Path $manifestPath -Value $content
+
+      - name: Build release archives and module bundle
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          stable_version="${{ steps.prerelease.outputs.stable_version }}"
+          full_version="v${stable_version}"
+          commit_sha="${GITHUB_SHA::7}"
+          build_date="$(date -u +"%Y-%m-%dT%H:%M:%SZ")"
+          if [[ -n "${{ steps.prerelease.outputs.prerelease_label }}" ]]; then
+            full_version="${full_version}-${{ steps.prerelease.outputs.prerelease_label }}"
+          fi
+
+          release_dir="dist/release"
+          module_stage="dist/module/KubeTidy"
+          rm -rf dist
+          mkdir -p "$release_dir" "$module_stage/bin"
+
+          cp KubeTidy.psd1 KubeTidy.psm1 "$module_stage/"
+          mkdir -p "$module_stage/Private"
+          cp Private/Get-KubeTidyBinaryPath.ps1 Private/Invoke-KubeTidyBinary.ps1 "$module_stage/Private/"
+
+          targets=(
+            "darwin amd64 kubetidy"
+            "darwin arm64 kubetidy"
+            "linux amd64 kubetidy"
+            "linux arm64 kubetidy"
+            "windows amd64 kubetidy.exe"
+          )
+
+          for target in "${targets[@]}"; do
+            read -r goos goarch binary <<<"$target"
+            bin_dir="dist/bin/${goos}-${goarch}"
+            mkdir -p "$bin_dir" "$module_stage/bin/${goos}-${goarch}"
+
+            GOOS="$goos" GOARCH="$goarch" CGO_ENABLED=0 \
+              go build -trimpath -ldflags="-s -w -X github.com/KubeDeckio/KubeTidy/internal/cli.version=${full_version} -X github.com/KubeDeckio/KubeTidy/internal/cli.commit=${commit_sha} -X github.com/KubeDeckio/KubeTidy/internal/cli.date=${build_date}" -o "$bin_dir/$binary" ./cmd/kubetidy
+
+            cp "$bin_dir/$binary" "$module_stage/bin/${goos}-${goarch}/"
+            if [[ "$goos" != "windows" ]]; then
+              chmod 755 "$bin_dir/$binary" "$module_stage/bin/${goos}-${goarch}/$binary"
+            fi
+          done
+
+          cp KubeTidy.yaml "$release_dir/KubeTidy.yaml"
+
+          tar -C "dist/bin/linux-amd64" -czf "$release_dir/KubeTidy-linux-amd64-${full_version}.tar.gz" kubetidy
+          tar -C "dist/bin/linux-arm64" -czf "$release_dir/KubeTidy-linux-arm64-${full_version}.tar.gz" kubetidy
+          tar -C "dist/bin/darwin-amd64" -czf "$release_dir/KubeTidy-darwin-amd64-${full_version}.tar.gz" kubetidy
+          tar -C "dist/bin/darwin-arm64" -czf "$release_dir/KubeTidy-darwin-arm64-${full_version}.tar.gz" kubetidy
+          (
+            cd "dist/bin/windows-amd64"
+            zip -q "../../release/KubeTidy-windows-amd64-${full_version}.zip" kubetidy.exe
+          )
+
+          mv dist/bin/linux-amd64/kubetidy dist/bin/linux-amd64/kubectl-KubeTidy
+          mv dist/bin/linux-arm64/kubetidy dist/bin/linux-arm64/kubectl-KubeTidy
+          mv dist/bin/darwin-amd64/kubetidy dist/bin/darwin-amd64/kubectl-KubeTidy
+          mv dist/bin/darwin-arm64/kubetidy dist/bin/darwin-arm64/kubectl-KubeTidy
+
+          tar -C "dist/bin/linux-amd64" -czf "$release_dir/KubeTidy-krew-linux-amd64-${full_version}.tar.gz" kubectl-KubeTidy
+          tar -C "dist/bin/linux-arm64" -czf "$release_dir/KubeTidy-krew-linux-arm64-${full_version}.tar.gz" kubectl-KubeTidy
+          tar -C "dist/bin/darwin-amd64" -czf "$release_dir/KubeTidy-krew-darwin-amd64-${full_version}.tar.gz" kubectl-KubeTidy
+          tar -C "dist/bin/darwin-arm64" -czf "$release_dir/KubeTidy-krew-darwin-arm64-${full_version}.tar.gz" kubectl-KubeTidy
+
+          sha_linux_amd64="$(sha256sum "$release_dir/KubeTidy-krew-linux-amd64-${full_version}.tar.gz" | awk '{print $1}')"
+          sha_linux_arm64="$(sha256sum "$release_dir/KubeTidy-krew-linux-arm64-${full_version}.tar.gz" | awk '{print $1}')"
+          sha_darwin_amd64="$(sha256sum "$release_dir/KubeTidy-krew-darwin-amd64-${full_version}.tar.gz" | awk '{print $1}')"
+          sha_darwin_arm64="$(sha256sum "$release_dir/KubeTidy-krew-darwin-arm64-${full_version}.tar.gz" | awk '{print $1}')"
+
+          sed -i "s/version: .*/version: \"${full_version}\"/" "$release_dir/KubeTidy.yaml"
+          sed -i "s#https://github.com/[^/]*/[^/]*/releases/download/[^/]*/KubeTidy-darwin-amd64-[^\"]*#https://github.com/${{ github.repository }}/releases/download/${TAG}/KubeTidy-krew-darwin-amd64-${full_version}.tar.gz#" "$release_dir/KubeTidy.yaml"
+          sed -i "s#https://github.com/[^/]*/[^/]*/releases/download/[^/]*/KubeTidy-darwin-arm64-[^\"]*#https://github.com/${{ github.repository }}/releases/download/${TAG}/KubeTidy-krew-darwin-arm64-${full_version}.tar.gz#" "$release_dir/KubeTidy.yaml"
+          sed -i "s#https://github.com/[^/]*/[^/]*/releases/download/[^/]*/KubeTidy-linux-amd64-[^\"]*#https://github.com/${{ github.repository }}/releases/download/${TAG}/KubeTidy-krew-linux-amd64-${full_version}.tar.gz#" "$release_dir/KubeTidy.yaml"
+          sed -i "s#https://github.com/[^/]*/[^/]*/releases/download/[^/]*/KubeTidy-linux-arm64-[^\"]*#https://github.com/${{ github.repository }}/releases/download/${TAG}/KubeTidy-krew-linux-arm64-${full_version}.tar.gz#" "$release_dir/KubeTidy.yaml"
+          sed -i "/KubeTidy-krew-darwin-amd64-${full_version}.tar.gz/{n;s/sha256: \".*\"/sha256: \"${sha_darwin_amd64}\"/;}" "$release_dir/KubeTidy.yaml"
+          sed -i "/KubeTidy-krew-darwin-arm64-${full_version}.tar.gz/{n;s/sha256: \".*\"/sha256: \"${sha_darwin_arm64}\"/;}" "$release_dir/KubeTidy.yaml"
+          sed -i "/KubeTidy-krew-linux-amd64-${full_version}.tar.gz/{n;s/sha256: \".*\"/sha256: \"${sha_linux_amd64}\"/;}" "$release_dir/KubeTidy.yaml"
+          sed -i "/KubeTidy-krew-linux-arm64-${full_version}.tar.gz/{n;s/sha256: \".*\"/sha256: \"${sha_linux_arm64}\"/;}" "$release_dir/KubeTidy.yaml"
+
+          tar -C dist/module -czf "$release_dir/KubeTidy-psmodule_${stable_version}.tar.gz" KubeTidy
+          (
+            cd "$release_dir"
+            sha256sum ./* > checksums.txt
+          )
+
+      - name: Extract release notes from changelog
+        shell: pwsh
+        run: |
+          $version = "${{ steps.prerelease.outputs.stable_version }}"
+          $fullTagVersion = $Env:TAG -replace '^v', ''
+          $content = Get-Content -Path "CHANGELOG.md" -Raw
+
+          if ($content -match "(?ms)^##\s+\[$fullTagVersion\]\s*.*?(?=^##\s+|\z)") {
+            $matches[0].Trim() | Out-File -FilePath "dist/release/release_notes.md" -Encoding utf8
+          }
+          elseif ($content -match "(?ms)^##\s+\[$version\]\s*.*?(?=^##\s+|\z)") {
+            $matches[0].Trim() | Out-File -FilePath "dist/release/release_notes.md" -Encoding utf8
+          }
+          elseif ($content -match "(?ms)^##\s+\[Unreleased\]\s*.*?(?=^##\s+|\z)") {
+            $matches[0].Trim() | Out-File -FilePath "dist/release/release_notes.md" -Encoding utf8
+          }
+          else {
+            "Release notes not found in CHANGELOG.md" | Out-File -FilePath "dist/release/release_notes.md" -Encoding utf8
+          }
+
+      - name: Upload PowerShell module bundle artifact
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7
+        with:
+          name: psgallery-module
+          path: dist/module/KubeTidy
+          if-no-files-found: error
+
+      - name: Create GitHub release and upload assets
+        uses: softprops/action-gh-release@153bb8e04406b158c6c84fc1615b65b24149a1fe # v2
+        with:
+          files: |
+            dist/release/*
+          body_path: dist/release/release_notes.md
+          prerelease: ${{ steps.prerelease.outputs.is_prerelease }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  publish-psgallery:
+    needs: build-and-release
+    runs-on: windows-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Download module bundle artifact
+        uses: actions/download-artifact@3e5f45b2cfb9172054b4087a40e8e0b5a5461e7c # v8
+        with:
+          name: psgallery-module
+          path: dist/psgallery/KubeTidy
+
+      - name: Validate module manifest and import
+        shell: pwsh
+        run: |
+          $modulePath = Join-Path $PWD 'dist\psgallery\KubeTidy\KubeTidy.psd1'
+          $manifest = Test-ModuleManifest -Path $modulePath
+          Write-Host "Validated module version: $($manifest.Version)"
+          Import-Module $modulePath -Force
+          Get-Command Invoke-KubeTidy | Out-Null
+
+      - name: Publish module to PowerShell Gallery
+        shell: pwsh
+        run: |
+          Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+          Publish-Module -Path ./dist/psgallery/KubeTidy -NuGetApiKey $env:PSGALLERY_API_KEY -Repository PSGallery
+        env:
+          PSGALLERY_API_KEY: ${{ secrets.PSGALLERY_API_KEY }}

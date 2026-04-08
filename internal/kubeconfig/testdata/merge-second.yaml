@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Config
+preferences: {}
+current-context: beta
+clusters:
+  - name: shared-cluster
+    cluster:
+      server: https://beta-overwrite.example
+  - name: beta-cluster
+    cluster:
+      server: https://beta.example
+contexts:
+  - name: shared-context
+    context:
+      cluster: shared-cluster
+      user: shared-user
+  - name: beta
+    context:
+      cluster: beta-cluster
+      user: beta-user
+users:
+  - name: shared-user
+    user:
+      token: should-not-win
+  - name: beta-user
+    user:
+      token: beta-token

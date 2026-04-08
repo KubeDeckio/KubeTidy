@@ -1,96 +1,43 @@
----
-title: Release Process
-parent: Documentation
-nav_order: 4
-layout: default
----
+# KubeTidy Release Process
 
-# 🚀 KubeTidy Release Process
+KubeTidy releases are built from Git tags such as `v0.0.21` or `v0.0.21-rc1`.
 
-This page outlines the steps required to release **KubeTidy** using GitHub Actions to automate publishing to the **PowerShell Gallery**, **Krew plugin repository**, and **documentation updates**.
+## What a tagged release does
 
----
+- runs Go tests
+- builds native binaries for Linux, macOS, and Windows
+- publishes Krew archives and updates `KubeTidy.yaml`
+- publishes the PowerShell module with the wrapper and bundled binaries
+- rebuilds the MkDocs site for GitHub Pages
+- marks rc-style tags as GitHub prereleases
 
-## 🔹 Tagging a New Release
+## Release steps
 
-Releases are managed through **Git tags** following [Semantic Versioning](https://semver.org/) (e.g., `v1.0.0`).
+1. Create a stable or release-candidate tag locally:
 
-### **1️⃣ Create and Push a Tag**
+```bash
+git tag v0.0.21
+git tag v0.0.21-rc1
+```
 
-1. **Create a tag locally** (replace `v1.0.0` with the version number):
-   ```bash
-   git tag v1.0.0
-   ```
-2. **Push the tag to GitHub**:
-   ```bash
-   git push origin v1.0.0
-   ```
-3. **GitHub Actions will trigger automatic deployments**.
+2. Push the tag:
 
----
+```bash
+git push origin v0.0.21
+```
 
-## 🔹 GitHub Actions Workflows
+3. GitHub Actions handles the rest through:
 
-We use GitHub Actions to automate the release process. Below are the workflows that get triggered when a new tag is pushed:
+- `.github/workflows/ci.yaml`
+- `.github/workflows/publish-release.yml`
+- `.github/workflows/pages.yml`
 
-### **1️⃣ Publish to PowerShell Gallery**
-📌 **Workflow:** [Publish Module to PowerShell Gallery](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/publish-psgal.yml)  
-This workflow:
-- Packages the PowerShell module.
-- Publishes it to the PowerShell Gallery.
+## Local verification before tagging
 
-### **2️⃣ Publish Plugin to Krew**
-📌 **Workflow:** [Publish Plugin to Krew](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/publish-krewplugin.yaml)  
-This workflow:
-- Packages the `kubectl` plugin.
-- Publishes it to Krew and attaches it as a GitHub release asset.
-
-### **3️⃣ Deploy Documentation to GitHub Pages**
-📌 **Workflow:** [Deploy Jekyll Site to Pages](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/deploy-docs.yml)  
-This workflow:
-- Builds and deploys the documentation to **GitHub Pages** when updates are pushed to the `docs/` folder.
-
-### **4️⃣ Netlify PR Previews**
-- Automatically deploys preview versions of the documentation for **each pull request**.
-- A unique preview URL is posted as a comment for easy review.
-
-### **5️⃣ Run PSScriptAnalyzer on PRs**
-📌 **Workflow:** [Run PSScriptAnalyzer](https://github.com/KubeDeckio/KubeTidy/blob/main/.github/workflows/PSScriptAnalyzer.yaml)  
-This workflow:
-- Runs **PSScriptAnalyzer** on every pull request.
-- Scans PowerShell scripts for warnings and errors.
-- Prevents faulty code from being merged.
-
----
-
-## 🔹 Code Quality and Linting
-
-**PSScriptAnalyzer** ensures the PowerShell code is clean before publishing. It:
-✅ Scans PowerShell scripts for best practices.  
-✅ Reports warnings and errors in GitHub Actions.  
-✅ Blocks releases until errors are resolved.
-
----
-
-## 🔹 GitHub Pages & Documentation Updates
-
-The **Deploy Jekyll Site to Pages** workflow automatically updates documentation when changes are made to the `docs/` folder. This prevents unnecessary builds when the documentation hasn’t changed.
-
-📌 **Trigger Conditions:**
-- A commit affecting `docs/` is pushed to `main`.
-- The workflow is manually triggered via GitHub Actions.
-
-Netlify builds **preview versions** of documentation for PRs. Always **check the Netlify preview URL** before merging documentation changes.
-
----
-
-## 🔹 Summary
-
-These workflows automate the release process, ensuring a smooth deployment across multiple platforms. The **PSScriptAnalyzer checks**, **GitHub Actions automation**, and **Netlify PR previews** ensure high-quality releases.
-
-📌 For full details, see the [workflows folder](https://github.com/KubeDeckio/KubeTidy/tree/main/.github/workflows) in the repository.
-
----
-
-✅ **Next Steps:** Make sure your release tag is correctly formatted and push it to GitHub to trigger the automated deployment process! 🚀
-
+```bash
+make tidy
+make test
+make build
+python -m pip install -r requirements-docs.txt
+mkdocs build --strict
+```

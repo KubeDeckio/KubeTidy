@@ -30,7 +30,7 @@ CompanyName = 'Pixel Robots'
 Copyright = '(c) Richard Hooper. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'A tool to clean up Kubernetes config files.'
+Description = 'A tool to clean up and manage Kubernetes config files.'
 
 # Minimum version of the PowerShell engine required by this module
 # PowerShellVersion = ''
@@ -116,7 +116,7 @@ PrivateData = @{
         # RequireLicenseAcceptance = $false
 
         # External dependent modules of this module
-        RequiredModules = @(@{ModuleName="powershell-yaml"; ModuleVersion="0.4.2"})
+        RequiredModules = @()
 
     } # End of PSData hashtable
 
@@ -129,4 +129,3 @@ PrivateData = @{
 # DefaultCommandPrefix = ''
 
 }
-

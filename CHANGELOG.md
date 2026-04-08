@@ -4,6 +4,24 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+- Native Go command support for cleanup, reporting, doctor checks, export, merge, structured output, completion generation, and build metadata.
+- Expanded kubeconfig fixture coverage for cleanup, export, merge, duplicate handling, field preservation, and doctor analysis.
+- Cross-platform CI coverage for Linux, macOS, and Windows, including PowerShell wrapper verification.
+- MkDocs Material docs site with branded landing-page overrides aligned with the wider KubeDeck tool family.
+- Dependabot support for GitHub Actions, Go modules, and Python docs dependencies.
+- Release-candidate handling in GitHub release automation.
+
+### Changed
+- KubeTidy is now delivered as a native CLI with PowerShell support preserved through `Invoke-KubeTidy`.
+- The PowerShell module now acts as a thin entrypoint over the main KubeTidy command surface.
+- Release automation is consolidated around a unified release flow for stable and prerelease tags.
+- GitHub Actions and dependency management now follow the same hardened maintenance pattern used in KubeMemo.
+- The documentation site has been moved onto MkDocs and rewritten to describe KubeTidy by user workflow rather than implementation detail.
+- Merge behavior is now documented explicitly as keep-first for duplicate names.
+
 ## [0.0.21] - 2024-12-06
 
 ### Fixed

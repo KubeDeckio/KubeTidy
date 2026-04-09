@@ -148,26 +148,18 @@
           </div>
         </div>
 
-        <div class="kt-home-showcase-right">
-          <article class="kt-home-terminal-window">
-            <div class="kt-home-terminal-window__bar">
-              <div class="kt-home-terminal-window__label">console</div>
-              <div class="kt-home-terminal-window__dots"><span></span><span></span><span></span></div>
-            </div>
-            <pre><code><span class="kt-home-terminal-user">kubetidy@kubedeck</span> <span class="kt-home-terminal-accent">$</span>
-kubetidy --kubeconfig ~/.kube/config --dryrun --verbose</code></pre>
-          </article>
-
-          <div class="kt-home-showcase-queries">
-            <h3>Example use cases</h3>
-            <ul>
-              <li>"Find stale clusters before the next on-call shift"</li>
-              <li>"Dry-run cleanup on a shared kubeconfig before removing contexts"</li>
-              <li>"Merge multiple kubeconfigs without losing supported fields"</li>
-              <li>"Export a smaller config for support or focused automation"</li>
-            </ul>
+        <article class="kt-home-terminal-window">
+          <div class="kt-home-terminal-window__bar">
+            <div class="kt-home-terminal-window__label">console</div>
+            <div class="kt-home-terminal-window__dots"><span></span><span></span><span></span></div>
           </div>
-        </div>
+          <pre><code><span class="kt-home-terminal-user">kubetidy@kubedeck</span> <span class="kt-home-terminal-accent">$</span> kubetidy --kubeconfig ~/.kube/config --dryrun --verbose
+
+Backup skipped because dry-run is enabled
+Checking reachability for cluster: aks-prod
+Checking reachability for cluster: old-sandbox
+Dry run enabled: The following clusters would be removed: old-sandbox</code></pre>
+        </article>
       </div>
 
       <article class="kt-home-callout kt-home-callout--usecases">

@@ -471,9 +471,7 @@ body {
 
 .kt-home-showcase-panel {
   display: grid;
-  grid-template-columns: minmax(0, 1.15fr) minmax(360px, 0.95fr);
-  gap: 2rem;
-  align-items: center;
+  gap: 1.75rem;
   padding: 2.25rem;
   border: 1px solid var(--kt-border);
   border-radius: 28px;
@@ -518,11 +516,6 @@ body {
   font-size: 1rem;
 }
 
-.kt-home-showcase-right {
-  display: grid;
-  gap: 1.5rem;
-}
-
 .kt-home-feature-grid {
   grid-template-columns: minmax(260px, 1.15fr) minmax(260px, 0.85fr);
   align-items: start;
@@ -558,7 +551,6 @@ body {
 .kt-home-panel li,
 .kt-home-workflow-step p,
 .kt-home-terminal p,
-.kt-home-showcase-queries li,
 .kt-home-callout p {
   color: var(--kt-text-soft);
 }
@@ -581,6 +573,7 @@ body {
 
 .kt-home-terminal-window {
   overflow: hidden;
+  width: 100%;
   border: 1px solid rgba(90, 214, 255, 0.26);
   border-radius: 20px;
   background: linear-gradient(180deg, rgba(18, 31, 52, 0.96), rgba(10, 21, 38, 0.96));
@@ -654,37 +647,6 @@ body {
   font-weight: 700;
 }
 
-.kt-home-showcase-queries h3 {
-  margin: 0 0 0.9rem;
-  color: #f8fbff;
-  font-size: 1.5rem;
-}
-
-.kt-home-showcase-queries ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.kt-home-showcase-queries li {
-  position: relative;
-  margin-bottom: 0.85rem;
-  padding-left: 1.2rem;
-  color: rgba(219, 234, 254, 0.74);
-  font-size: 1rem;
-  font-style: italic;
-  line-height: 1.55;
-}
-
-.kt-home-showcase-queries li::before {
-  content: '"';
-  position: absolute;
-  left: 0;
-  color: #38bdf8;
-  font-size: 1.05rem;
-  font-style: normal;
-}
-
 .kt-home-pill-grid {
   display: flex;
   flex-wrap: wrap;
@@ -750,18 +712,15 @@ body {
 }
 
 [data-md-color-scheme="default"] .kt-home-showcase-copy h2,
-[data-md-color-scheme="default"] .kt-home-showcase-queries h3,
 [data-md-color-scheme="light"] .kt-home-showcase-copy h2,
-[data-md-color-scheme="light"] .kt-home-showcase-queries h3 {
+[data-md-color-scheme="light"] .kt-home-showcase-copy h2 {
   color: #10243a;
 }
 
 [data-md-color-scheme="default"] .kt-home-showcase-copy p,
 [data-md-color-scheme="default"] .kt-home-showcase-points li,
-[data-md-color-scheme="default"] .kt-home-showcase-queries li,
 [data-md-color-scheme="light"] .kt-home-showcase-copy p,
-[data-md-color-scheme="light"] .kt-home-showcase-points li,
-[data-md-color-scheme="light"] .kt-home-showcase-queries li {
+[data-md-color-scheme="light"] .kt-home-showcase-points li {
   color: #4f647f;
 }
 

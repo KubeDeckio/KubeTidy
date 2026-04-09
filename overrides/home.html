@@ -155,30 +155,47 @@
           </div>
           <pre><code><span class="kt-home-terminal-user">kubetidy@kubedeck</span> <span class="kt-home-terminal-accent">$</span> kubetidy --kubeconfig ~/.kube/config --dryrun --verbose
 
-Backup skipped because dry-run is enabled
-Checking reachability for cluster: aks-prod
-Checking reachability for cluster: old-sandbox
-Dry run enabled: The following clusters would be removed: old-sandbox</code></pre>
+<span class="kt-home-terminal-yellow">Dry run enabled:</span> Skipping backup of the KubeConfig file.
+<span class="kt-home-terminal-cyan">Checking reachability for cluster:</span> aks-prod
+<span class="kt-home-terminal-cyan">Checking reachability for cluster:</span> old-sandbox
+<span class="kt-home-terminal-yellow">Dry run enabled:</span> The following clusters would be removed: <span class="kt-home-terminal-red">old-sandbox</span></code></pre>
+        </article>
+
+        <article class="kt-home-callout kt-home-callout--scenarios">
+          <div class="kt-home-callout__intro">
+            <span class="kt-home-card__eyebrow">Best-fit workflows</span>
+            <h3>Where KubeTidy pays off fastest</h3>
+            <p>Start with the cleanup jobs that usually create the most manual kubeconfig churn, then let KubeTidy handle them with backups and dry-run guardrails.</p>
+          </div>
+
+          <div class="kt-home-scenario-grid">
+            <article class="kt-home-scenario kt-home-scenario--blue">
+              <h4>Cluster fleet cleanup</h4>
+              <p>Remove unreachable clusters without leaving broken contexts and users behind.</p>
+            </article>
+            <article class="kt-home-scenario kt-home-scenario--green">
+              <h4>Support and contractor configs</h4>
+              <p>Export smaller kubeconfigs with only the contexts someone actually needs.</p>
+            </article>
+            <article class="kt-home-scenario kt-home-scenario--amber">
+              <h4>Kubeconfig mergers</h4>
+              <p>Combine multiple config files while preserving the metadata your teams still rely on.</p>
+            </article>
+            <article class="kt-home-scenario kt-home-scenario--blue">
+              <h4>Safer local admin setup</h4>
+              <p>Trim stale entries before they turn into the wrong context switch during day-to-day work.</p>
+            </article>
+          </div>
+
+          <div class="kt-home-callout__footer">
+            <p>If your kubeconfig keeps growing but your confidence in it keeps shrinking, KubeTidy is the tool that reduces that drift.</p>
+            <div class="kt-home-actions">
+              <a class="kt-home-button" href="{{ 'docs/installation/' | url }}">Get Started</a>
+              <a class="kt-home-button kt-home-button--secondary" href="{{ 'docs/usage/powershell-usage/' | url }}">PowerShell Docs</a>
+            </div>
+          </div>
         </article>
       </div>
-
-      <article class="kt-home-callout kt-home-callout--usecases">
-        <h3>Where KubeTidy pays off fastest</h3>
-        <div class="kt-home-pill-grid">
-          <span class="kt-home-pill">Cluster fleet cleanup</span>
-          <span class="kt-home-pill">Contractor or support configs</span>
-          <span class="kt-home-pill">Kubeconfig mergers</span>
-          <span class="kt-home-pill">Safer local admin setup</span>
-          <span class="kt-home-pill">Context export for automation</span>
-        </div>
-        <p>
-          If your kubeconfig keeps growing but your confidence in it keeps shrinking, KubeTidy is the tool that reduces that drift.
-        </p>
-        <div class="kt-home-actions">
-          <a class="kt-home-button" href="{{ 'docs/installation/' | url }}">Get Started</a>
-          <a class="kt-home-button kt-home-button--secondary" href="{{ 'docs/usage/powershell-usage/' | url }}">PowerShell Docs</a>
-        </div>
-      </article>
     </div>
   </section>
 {% endblock %}

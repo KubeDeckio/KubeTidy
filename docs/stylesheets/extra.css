@@ -472,6 +472,10 @@ body {
   background: linear-gradient(180deg, rgba(12, 26, 46, 0.92), rgba(17, 35, 61, 0.96));
 }
 
+.kt-home-section--scenarios {
+  background: linear-gradient(180deg, rgba(15, 27, 47, 0.98), rgba(16, 29, 51, 0.98));
+}
+
 .kt-home-section-heading {
   max-width: 820px;
   margin-bottom: 1.5rem;
@@ -776,6 +780,11 @@ body {
 [data-md-color-scheme="default"] .kt-home-callout,
 [data-md-color-scheme="light"] .kt-home-callout {
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 255, 0.98));
+}
+
+[data-md-color-scheme="default"] .kt-home-section--scenarios,
+[data-md-color-scheme="light"] .kt-home-section--scenarios {
+  background: linear-gradient(180deg, #eef5ff, #f7fbff);
 }
 
 [data-md-color-scheme="default"] .kt-home-scenario,

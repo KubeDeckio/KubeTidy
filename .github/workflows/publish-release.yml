@@ -91,7 +91,7 @@ jobs:
           $manifestPath = "./KubeTidy.psd1"
           $content = Get-Content $manifestPath -Raw
 
-          $content = $content -replace "^\s*ModuleVersion\s*=\s*'.*'", "ModuleVersion = '$version'"
+          $content = $content -replace "(?m)^\s*ModuleVersion\s*=\s*'.*'", "ModuleVersion = '$version'"
 
           if ([string]::IsNullOrWhiteSpace($prerelease)) {
             $content = $content -replace "(?ms)\r?\n\s*Prerelease\s*=\s*'.*?'", ""

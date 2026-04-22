@@ -1,105 +1,48 @@
----
-title: Contributing
-parent: Documentation
-nav_order: 3
-layout: default
----
+# Contributing to KubeTidy
 
-# 🤝 Contributing to KubeTidy
+Thank you for contributing to **KubeTidy**.
 
-🎉 Thank you for considering contributing to **KubeTidy**! 🎉
+## Getting started
 
-We welcome all contributions, whether it’s reporting bugs, suggesting improvements, updating documentation, or submitting code. This guide will help you contribute effectively.
+1. Fork the repository.
+2. Clone your fork:
 
----
-
-## 🚀 Getting Started
-
-### 🔹 Fork & Clone the Repository
-
-1. **Fork** the repository by clicking the **Fork** button at the top-right of this page.
-2. **Clone** your forked repository:
-   ```bash
-   git clone https://github.com/<your-username>/KubeTidy.git
-   cd KubeTidy
-   ```
-3. Add the main **KubeTidy** repository as a remote:
-   ```bash
-   git remote add upstream https://github.com/KubeDeckio/KubeTidy.git
-   ```
-
-### 🔹 Set Up Your Development Environment
-
-Before contributing, install the required dependencies:
-
-✅ **PowerShell 7 or higher**.  
-✅ **Install the powershell-yaml module**:
-   ```powershell
-   Install-Module -Name powershell-yaml -Scope CurrentUser
-   ```
-
----
-
-## 🛠️ How to Contribute
-
-### 📌 Reporting Bugs
-
-If you find a bug, please **open an issue** with:
-- The environment you're using (OS, PowerShell version).
-- Steps to reproduce the issue.
-- Expected behavior vs actual behavior.
-
-### 📌 Suggesting Features
-
-Have an idea to improve **KubeTidy**? We’d love to hear it! Open an issue and provide:
-- A clear description of the feature.
-- Specific use cases where it would be helpful.
-
-### 📌 Creating a Branch
-
-Always create a new branch before making changes:
 ```bash
-git checkout -b feature/my-new-feature
+git clone https://github.com/<your-username>/KubeTidy.git
+cd KubeTidy
+git remote add upstream https://github.com/KubeDeckio/KubeTidy.git
 ```
 
-### 📌 Submitting a Pull Request (PR)
+## Development environment
 
-1. **Test your changes** to ensure they work as expected.
-2. Push your branch to your fork:
-   ```bash
-   git push origin feature/my-new-feature
-   ```
-3. Open a **Pull Request**:
-   - Go to your fork on GitHub and click **"New pull request"**.
-   - Choose your branch and submit the PR to the `main` branch of **KubeTidy**.
-   - Provide a **clear and detailed description** of your changes.
+Install the main development dependencies:
 
-### 📌 Code Standards
+- Go
+- PowerShell 7 if you want to test the wrapper
+- Python 3.11+ for docs builds
 
-✅ **Follow PowerShell best practices**.  
-✅ **Use meaningful commit messages** (e.g., "Fix issue with cluster cleanup logic" instead of "Fix bug").  
-✅ **Comment your code** to explain complex logic.
+## Common local commands
 
----
+```bash
+make tidy
+make test
+make build
+python -m pip install -r requirements-docs.txt
+mkdocs build --strict
+```
 
-## 🔍 Pull Request Review Process
+## Pull requests
 
-All contributions will be reviewed by maintainers. Reviews may involve:
-- Suggesting improvements.
-- Requesting more information.
-- Testing changes before merging.
+- create a topic branch
+- test your changes before opening the PR
+- keep docs and release packaging updated when behavior changes
 
-Please be patient, as review times may vary.
+## Standards
 
----
+- follow existing Go and PowerShell conventions in the repo
+- prefer small, reviewable changes
+- keep user-facing docs aligned with the real command surface
 
-## 📜 Code of Conduct
+## Code of conduct
 
-We follow a [Code of Conduct](https://github.com/KubeDeckio/KubeTidy/blob/main/CODE_OF_CONDUCT.md) to ensure a respectful and inclusive community.
-
----
-
-## 🎉 Thank You!
-
-Your contributions help make **KubeTidy** better! We appreciate your support in improving the project. 🚀
-
+See the [Code of Conduct](https://github.com/KubeDeckio/KubeTidy/blob/main/CODE_OF_CONDUCT.md).

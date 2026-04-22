@@ -1,0 +1,205 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+  {{ super() }}
+
+  <section class="kt-home-hero">
+    <div class="kt-home-shell kt-home-hero__inner">
+      <h1>Untangle kubeconfig sprawl before it breaks the next cluster switch.</h1>
+      <p class="kt-home-subhead">
+        KubeTidy keeps Kubernetes access sane by removing unreachable clusters, cleaning the users and contexts tied to them,
+        merging config files safely, and exporting smaller kubeconfigs when you need something focused and shareable.
+      </p>
+      <div class="kt-home-actions">
+        <a class="kt-home-button" href="{{ 'docs/installation/' | url }}">Install KubeTidy</a>
+        <a class="kt-home-button kt-home-button--secondary" href="{{ 'docs/usage/' | url }}">See Usage</a>
+        <a class="kt-home-button kt-home-button--secondary" href="{{ config.repo_url }}">View on GitHub</a>
+      </div>
+
+      <div class="kt-home-metrics">
+        <article class="kt-home-metric kt-home-metric--blue">
+          <span class="kt-home-metric__value">3 entrypoints</span>
+          <span class="kt-home-metric__label">Native CLI, Krew plugin, and PowerShell wrapper all run the same Go core.</span>
+        </article>
+        <article class="kt-home-metric kt-home-metric--green">
+          <span class="kt-home-metric__value">Config-safe</span>
+          <span class="kt-home-metric__label">Preserves supported kubeconfig fields instead of rewriting partial YAML by hand.</span>
+        </article>
+        <article class="kt-home-metric kt-home-metric--amber">
+          <span class="kt-home-metric__value">Operator focused</span>
+          <span class="kt-home-metric__label">Backups, dry runs, and verbose output make cleanup safer in real environments.</span>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="kt-home-section">
+    <div class="kt-home-shell">
+      <div class="kt-home-section-heading">
+        <h2>KubeTidy exists for the moment your kubeconfig stops being trustworthy.</h2>
+        <p>
+          Large kubeconfig files collect stale clusters, broken auth entries, and temporary contexts that outlive the environment they came from.
+          KubeTidy gives you a faster and safer way to clean that up than hand-editing YAML or hoping <code>kubectl config</code> is enough.
+        </p>
+      </div>
+
+      <div class="kt-home-card-grid">
+        <article class="kt-home-card kt-home-card--blue">
+          <h3>Remove unreachable clusters without leaving dangling contexts behind</h3>
+          <p>When a cluster is gone, KubeTidy also removes the users and contexts that depended on it.</p>
+        </article>
+        <article class="kt-home-card kt-home-card--green">
+          <h3>Combine kubeconfig files without throwing away the fields that still matter</h3>
+          <p>Keep remaining auth and cluster metadata intact while building a unified config.</p>
+        </article>
+        <article class="kt-home-card kt-home-card--amber">
+          <h3>Create smaller configs for support, sharing, and focused automation</h3>
+          <p>Export only the contexts you want instead of distributing a full personal kubeconfig.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="kt-home-section kt-home-section--band">
+    <div class="kt-home-shell">
+      <div class="kt-home-section-heading">
+        <h2>One product, three ways to work.</h2>
+      </div>
+
+      <div class="kt-home-card-grid">
+        <article class="kt-home-panel kt-home-panel--blue">
+          <span class="kt-home-card__eyebrow">Native CLI</span>
+          <h3><code>kubetidy</code></h3>
+          <p>Use the Go binary directly in shells, scripts, and CI environments.</p>
+          <ul>
+            <li>Best fit for Linux, macOS, and automation</li>
+            <li>Simple GNU-style flags</li>
+            <li>No PowerShell required</li>
+          </ul>
+        </article>
+        <article class="kt-home-panel kt-home-panel--green">
+          <span class="kt-home-card__eyebrow">kubectl Plugin</span>
+          <h3><code>kubectl kubetidy</code></h3>
+          <p>Install through Krew to keep kubeconfig management close to your Kubernetes workflow.</p>
+          <ul>
+            <li>Native plugin package</li>
+            <li>Fits existing <code>kubectl</code> habits</li>
+            <li>Good for cluster operators already using Krew</li>
+          </ul>
+        </article>
+        <article class="kt-home-panel kt-home-panel--amber">
+          <span class="kt-home-card__eyebrow">PowerShell</span>
+          <h3><code>Invoke-KubeTidy</code></h3>
+          <p>Keep existing PowerShell automation and shell usage while the implementation runs in Go underneath.</p>
+          <ul>
+            <li>Same familiar command surface</li>
+            <li>Bundled binaries for supported platforms</li>
+            <li>Good migration path for existing users</li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="kt-home-section">
+    <div class="kt-home-shell">
+      <div class="kt-home-section-heading">
+        <h2>What a normal KubeTidy workflow looks like.</h2>
+      </div>
+
+      <div class="kt-home-workflow">
+        <article class="kt-home-workflow-step kt-home-workflow-step--blue">
+          <span class="kt-home-workflow-step__num">1</span>
+          <h3>Inspect the config</h3>
+          <p>List clusters or contexts and confirm what is still relevant before changing anything.</p>
+        </article>
+        <article class="kt-home-workflow-step kt-home-workflow-step--green">
+          <span class="kt-home-workflow-step__num">2</span>
+          <h3>Run cleanup with guardrails</h3>
+          <p>Use backups, exclusions, and dry-run mode to control what will be removed.</p>
+        </article>
+        <article class="kt-home-workflow-step kt-home-workflow-step--amber">
+          <span class="kt-home-workflow-step__num">3</span>
+          <h3>Split or merge as needed</h3>
+          <p>Export a filtered kubeconfig or merge multiple inputs into one cleaner result.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="kt-home-section kt-home-section--band">
+    <div class="kt-home-shell">
+      <div class="kt-home-showcase-panel">
+        <div class="kt-home-showcase-copy">
+          <span class="kt-home-card__eyebrow">Terminal-first cleanup</span>
+          <h2>Clean kubeconfig sprawl without hand-editing YAML.</h2>
+          <p>KubeTidy gives operators a safer terminal-native workflow for inspecting stale clusters, running cleanup with guardrails, and exporting smaller configs when they need something focused and shareable.</p>
+
+          <ul class="kt-home-showcase-points">
+            <li>Run dry runs before deleting stale clusters or contexts.</li>
+            <li>Keep cleanup close to the shell, CI job, or `kubectl` workflow already in use.</li>
+            <li>Use the same Go core through the native CLI, Krew plugin, or PowerShell commands.</li>
+            <li>Export reduced kubeconfigs for support, contractors, and automation.</li>
+          </ul>
+
+          <div class="kt-home-actions">
+            <a class="kt-home-button" href="{{ 'docs/installation/' | url }}">Get Started</a>
+            <a class="kt-home-button kt-home-button--secondary" href="{{ 'docs/usage/' | url }}">See Usage</a>
+          </div>
+        </div>
+
+        <article class="kt-home-terminal-window">
+          <div class="kt-home-terminal-window__bar">
+            <div class="kt-home-terminal-window__label">console</div>
+            <div class="kt-home-terminal-window__dots"><span></span><span></span><span></span></div>
+          </div>
+          <pre><code><span class="kt-home-terminal-user">kubetidy@kubedeck</span> <span class="kt-home-terminal-accent">$</span> kubetidy --kubeconfig ~/.kube/config --dryrun --verbose
+
+<span class="kt-home-terminal-yellow">Dry run enabled:</span> Skipping backup of the KubeConfig file.
+<span class="kt-home-terminal-cyan">Checking reachability for cluster:</span> aks-prod
+<span class="kt-home-terminal-cyan">Checking reachability for cluster:</span> old-sandbox
+<span class="kt-home-terminal-yellow">Dry run enabled:</span> The following clusters would be removed: <span class="kt-home-terminal-red">old-sandbox</span></code></pre>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="kt-home-section kt-home-section--scenarios">
+    <div class="kt-home-shell">
+      <article class="kt-home-callout kt-home-callout--scenarios">
+        <div class="kt-home-callout__intro">
+          <span class="kt-home-card__eyebrow">Best-fit workflows</span>
+          <h3>Where KubeTidy pays off fastest</h3>
+          <p>Start with the cleanup jobs that usually create the most manual kubeconfig churn, then let KubeTidy handle them with backups and dry-run guardrails.</p>
+        </div>
+
+        <div class="kt-home-scenario-grid">
+          <article class="kt-home-scenario kt-home-scenario--blue">
+            <h4>Cluster fleet cleanup</h4>
+            <p>Remove unreachable clusters without leaving broken contexts and users behind.</p>
+          </article>
+          <article class="kt-home-scenario kt-home-scenario--green">
+            <h4>Support and contractor configs</h4>
+            <p>Export smaller kubeconfigs with only the contexts someone actually needs.</p>
+          </article>
+          <article class="kt-home-scenario kt-home-scenario--amber">
+            <h4>Kubeconfig mergers</h4>
+            <p>Combine multiple config files while preserving the metadata your teams still rely on.</p>
+          </article>
+          <article class="kt-home-scenario kt-home-scenario--blue">
+            <h4>Safer local admin setup</h4>
+            <p>Trim stale entries before they turn into the wrong context switch during day-to-day work.</p>
+          </article>
+        </div>
+
+        <div class="kt-home-callout__footer">
+          <p>If your kubeconfig keeps growing but your confidence in it keeps shrinking, KubeTidy is the tool that reduces that drift.</p>
+          <div class="kt-home-actions">
+            <a class="kt-home-button" href="{{ 'docs/installation/' | url }}">Get Started</a>
+            <a class="kt-home-button kt-home-button--secondary" href="{{ 'docs/usage/powershell-usage/' | url }}">PowerShell Docs</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </section>
+{% endblock %}

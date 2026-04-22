@@ -1,34 +1,25 @@
----
-title: Documentation
-nav_order: 2
-layout: default
----
+# KubeTidy Documentation
 
-# 📖 KubeTidy Documentation
+KubeTidy is a kubeconfig management tool for Kubernetes users who need to clean up stale clusters, merge configs, and safely export just the contexts they care about.
 
-Welcome to the **KubeTidy** documentation! This is your complete guide to installing, using, and contributing to KubeTidy. Whether you're just getting started or an advanced user, you'll find everything you need here to manage and streamline your Kubernetes configurations efficiently.
+You can use KubeTidy in the way that fits your workflow best:
 
-## ✨ Why Use KubeTidy?
+- `kubetidy`
+- `kubectl kubetidy`
+- `Invoke-KubeTidy`
 
-🚀 **Built with PowerShell** – Cross-platform support for Windows, Linux, and macOS.  
-🛠️ **Automated Kubeconfig Management** – Clean up, merge, and optimize `kubeconfig` files effortlessly.  
-📌 **Backup & Restore** – Automatically creates backups before making changes.  
-📊 **Verbose Logging & Dry Run Mode** – Gain full transparency and safely preview changes before applying them.
+## Why teams use KubeTidy
 
-## 📌 Getting Started
-Jump into the key sections below:
+- It removes unreachable clusters and the users and contexts tied to them
+- It creates backups before writing unless you run in dry-run mode
+- It preserves supported kubeconfig fields instead of rewriting partial configs
+- It can merge multiple kubeconfig files without losing remaining entries
+- It can export selected contexts into a smaller focused kubeconfig
+- It can inspect kubeconfig health with `report` and `doctor`
 
-### 🔹 [Installation Guide](./installation)
-Learn how to install KubeTidy and configure it for your environment.
+## Read next
 
-### 🔹 [Usage Guide](./usage)
-Step-by-step instructions to manage and optimize your Kubernetes configurations.
-
-### 🔹 [Logging & Output](./usage/logging-output)
-Understand detailed logging, error messages, and debugging techniques.
-
-### 🔹 [Contributing](./contributing)
-Want to contribute? Check out the developer and contributor guidelines.
-
-Stay updated as we continue to enhance KubeTidy with new features and improvements!
-
+- [Installation](installation.md)
+- [Usage](usage/index.md)
+- [Logging and Output](usage/logging-output.md)
+- [Contributing](contributing.md)

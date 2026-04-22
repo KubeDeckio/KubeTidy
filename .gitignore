@@ -1,0 +1,7 @@
+/bin/
+/dist/
+/site/
+/kubetidy
+/kubetidy.exe
+.venv-docs/
+

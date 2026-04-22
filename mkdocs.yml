@@ -1,0 +1,90 @@
+site_name: "KubeTidy"
+site_url: https://docs.kubetidy.io
+docs_dir: docs
+site_dir: site
+
+theme:
+  name: material
+  custom_dir: overrides
+  font:
+    text: Roboto
+    code: Roboto Mono
+  logo: assets/images/KubeTidyDark.png
+  favicon: assets/images/favicon.ico
+  icon:
+    repo: fontawesome/brands/github
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: Switch to light mode
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: blue grey
+      accent: teal
+      toggle:
+        icon: material/brightness-7
+        name: Switch to dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: blue grey
+      accent: teal
+      toggle:
+        icon: material/brightness-4
+        name: Switch to system preference
+  features:
+    - navigation.tabs
+    - navigation.top
+    - navigation.sections
+    - navigation.path
+    - navigation.footer
+    - navigation.instant
+    - navigation.tracking
+    - content.code.copy
+    - content.action.edit
+
+extra:
+  social:
+    - icon: fontawesome/brands/github
+      link: https://github.com/KubeDeckio/KubeTidy
+  generator: false
+
+extra_css:
+  - stylesheets/extra.css
+
+extra_javascript:
+  - javascripts/extra.js
+
+copyright: Copyright &copy; 2026 KubeDeck
+
+repo_url: https://github.com/KubeDeckio/KubeTidy
+edit_uri: edit/main/docs/
+
+nav:
+  - Home: index.md
+  - Documentation:
+      - Overview: docs/index.md
+      - Installation: docs/installation.md
+      - Usage:
+          - Overview: docs/usage/index.md
+          - PowerShell: docs/usage/powershell-usage.md
+          - Krew Plugin: docs/usage/krew-usage.md
+          - Logging and Output: docs/usage/logging-output.md
+      - Reference:
+          - CLI Reference: docs/reference/commands.md
+      - Contributing: docs/contributing.md
+      - Release Process: docs/releaseprocess.md
+      - Changelog: changelog.md
+  - KubeDeck: https://kubedeck.io
+
+markdown_extensions:
+  - admonition
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.details
+
+plugins:
+  - search
